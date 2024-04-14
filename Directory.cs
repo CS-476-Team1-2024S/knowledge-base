@@ -1,19 +1,27 @@
 using System.Text;
 namespace KnowledgeBase
 {
-    class Directory
+    public class Directory
     {
         public DirectoryInfo Info { get; set; }
         public Directory(string path)
         {
-            Info = new(path);
+            // Will create a new directory if it does not exist
+            Info = System.IO.Directory.CreateDirectory(path);
         }
+        public static void Move(Directory src, Directory dest)
+        {
+            src.Info.MoveTo(Path.Combine(dest.Info.FullName, src.Info.Name));
+        }
+        public static void Delete(Directory dir)
+        {
 
+            dir.Info.Delete(true);
+        }
         public override string ToString()
         {
             return Scan(this.Info);
         }
-
         private static string Scan(DirectoryInfo root, int level = 0)
         {
             StringBuilder builder = new();
@@ -27,6 +35,5 @@ namespace KnowledgeBase
 
             return builder.ToString();
         }
-        // Functions: Create files/Directories
     }
 }
