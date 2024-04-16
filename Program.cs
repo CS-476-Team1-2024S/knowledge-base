@@ -5,17 +5,23 @@
         {
             string path = Path.Combine(System.IO.Directory.GetCurrentDirectory(),"Root");
             Directory root = new(path);
+            // File f = File.Create(path+"\\Dir3"+"\\Info4.txt");
+            // f.Write("Hello there!",true);
 
-            Console.WriteLine(root.ToString());
+            // Console.WriteLine(root.ToString());
+            // f.Move(new(path+"\\Dir2"));
+            // f.Write("I've been moved!",true);
+            // Directory dir3 = new(path+"\\Dir3");
+            // dir3.Move(new(path+"\\Dir2"));
 
-            File file = new(path+"\\Info4.txt");
-            File.Write(file, "This is me writing to a file");
+            // Console.WriteLine(root.ToString());
 
-            Console.WriteLine(root.ToString());
-            
-            File.Move(file, new(path+"\\Dir3"));
+            // UserDB.AddUser("TechnoBro03","password1234",1);
 
-            Console.WriteLine(root.ToString());
+            Console.WriteLine(UserDB.VerifyUser("TechnoBro03","password1234"));
+            UserDB.LoadFromFile();
+            Console.WriteLine(UserDB.VerifyUser("TechnoBro03","password1234"));
+            UserDB.SaveToFile();
             
         }
     }

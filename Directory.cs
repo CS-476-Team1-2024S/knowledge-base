@@ -6,17 +6,26 @@ namespace KnowledgeBase
         public DirectoryInfo Info { get; set; }
         public Directory(string path)
         {
-            // Will create a new directory if it does not exist
-            Info = System.IO.Directory.CreateDirectory(path);
+            if(System.IO.Directory.Exists(path))
+                Info = System.IO.Directory.CreateDirectory(path);
+            else
+                throw new ArgumentException($"{path} does not exist.");
         }
-        public static void Move(Directory src, Directory dest)
+        public static Directory Create(string path)
         {
-            src.Info.MoveTo(Path.Combine(dest.Info.FullName, src.Info.Name));
+            if(System.IO.Directory.Exists(path))
+                throw new ArgumentException($"{path} already exists.");
+            System.IO.Directory.CreateDirectory(path);
+            return new Directory(path);
         }
-        public static void Delete(Directory dir)
+        public void Move(Directory dest)
+        {
+            this.Info.MoveTo(Path.Combine(dest.Info.FullName, this.Info.Name));
+        }
+        public void Delete()
         {
 
-            dir.Info.Delete(true);
+            this.Info.Delete(true);
         }
         public override string ToString()
         {

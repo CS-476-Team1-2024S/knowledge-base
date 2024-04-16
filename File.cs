@@ -7,28 +7,36 @@ namespace KnowledgeBase
         public File(string path)
         {
             // Will create a new file if it does not exist 
-            if(!System.IO.File.Exists(path))
-                using (System.IO.File.Create(path));
-            Info = new(path);
+            if(System.IO.File.Exists(path))
+                Info = new(path);
+            else
+                throw new FileNotFoundException($"{path} does not exist.");
         }
-        public static void Move(File src, Directory dest)
+        public static File Create(string path)
         {
-            src.Info.MoveTo(Path.Combine(dest.Info.FullName, src.Info.Name));
+            if(System.IO.File.Exists(path))
+                throw new ArgumentException($"{path} already exists.");
+            System.IO.File.Create(path).Close();
+            return new File(path);
         }
-        public static void Delete(File file)
+        public void Move(Directory dest)
         {
-            file.Info.Delete();
+            this.Info.MoveTo(Path.Combine(dest.Info.FullName, this.Info.Name));
         }
-        public static void Write(File file, string content, bool append = false)
+        public void Delete()
+        {
+            this.Info.Delete();
+        }
+        public void Write(string content, bool append = false)
         {
             byte[] bytes = Encoding.UTF8.GetBytes(content);
             FileMode fm = append ? FileMode.Append : FileMode.Create;
-            using FileStream fs = new(file.Info.FullName,fm);
+            using FileStream fs = new(this.Info.FullName,fm);
             fs.Write(bytes);
         }
-        public static string Read(File file)
+        public string Read()
         {
-            using FileStream fs = new(file.Info.FullName, FileMode.Open);
+            using FileStream fs = new(this.Info.FullName, FileMode.Open);
             byte[] bytes = new byte[fs.Length];
             fs.Read(bytes);
             return Encoding.UTF8.GetString(bytes);
