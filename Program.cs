@@ -18,11 +18,13 @@
 
             // UserDB.AddUser("TechnoBro03","password1234",1);
 
-            Console.WriteLine(UserDB.VerifyUser("TechnoBro03","password1234"));
-            UserDB.LoadFromFile();
-            Console.WriteLine(UserDB.VerifyUser("TechnoBro03","password1234"));
-            UserDB.SaveToFile();
+            // Console.WriteLine(UserDB.VerifyUser("TechnoBro03","password1234"));
+            // UserDB.LoadFromFile();
+            // Console.WriteLine(UserDB.VerifyUser("TechnoBro03","password1234"));
+            // UserDB.SaveToFile();
             
+            FileIndexer.IndexDirectory(root);
+            FileIndexer.SearchAndRank("i");
         }
     }
 }
