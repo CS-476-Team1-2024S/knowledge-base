@@ -24,7 +24,13 @@
             // UserDB.SaveToFile();
             
             FileIndexer.IndexDirectory(root);
-            FileIndexer.SearchAndRank("i");
+            string query = "drizzly";
+            var files = FileIndexer.SearchTFIDF(query);
+            Console.WriteLine($"Search results for \"{query}\"");
+            foreach (var file in files)
+            {
+                Console.WriteLine("\t"+file);
+            }
         }
     }
 }
