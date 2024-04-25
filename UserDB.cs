@@ -42,7 +42,11 @@ namespace KnowledgeBase
                 string json = file.Read();
                 try
                 {
-                    db = JsonSerializer.Deserialize<Dictionary<string, User>>(json);
+                    var deserializedDb = JsonSerializer.Deserialize<Dictionary<string, User>>(json);
+                    if (deserializedDb != null)
+                    {
+                        db = deserializedDb;
+                    }
                 }
                 catch {}
             }

@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.002.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Knowledgebase", "Knowledgebase.csproj", "{84F5F191-5D5F-416D-83BF-F675B69C6DBD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dbConnection", "dbConnection.csproj", "{2429A8BB-B2A5-4ABE-B31D-CCFE96EA3FB4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,15 +11,15 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{84F5F191-5D5F-416D-83BF-F675B69C6DBD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{84F5F191-5D5F-416D-83BF-F675B69C6DBD}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{84F5F191-5D5F-416D-83BF-F675B69C6DBD}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{84F5F191-5D5F-416D-83BF-F675B69C6DBD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2429A8BB-B2A5-4ABE-B31D-CCFE96EA3FB4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2429A8BB-B2A5-4ABE-B31D-CCFE96EA3FB4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2429A8BB-B2A5-4ABE-B31D-CCFE96EA3FB4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2429A8BB-B2A5-4ABE-B31D-CCFE96EA3FB4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {7EC3F849-C8B0-4BF8-B7A8-891FE40F3C3E}
+		SolutionGuid = {2D65DF7B-1432-4C54-85AB-C60EAFA3C474}
 	EndGlobalSection
 EndGlobal

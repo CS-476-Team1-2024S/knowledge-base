@@ -1,7 +1,7 @@
 {
-  "TechnoBro03": {
-    "Username": "TechnoBro03",
-    "Password": "password1234",
+  "testing": {
+    "Username": "testing",
+    "Password": "testing",
     "AccessLevel": 1
   }
 }
