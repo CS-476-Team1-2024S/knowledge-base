@@ -24,7 +24,6 @@ namespace KnowledgeBase
         }
         public void Delete()
         {
-
             this.Info.Delete(true);
         }
         public override string ToString()

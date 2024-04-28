@@ -23,8 +23,8 @@ namespace KnowledgeBase
             {
                 if(string.IsNullOrWhiteSpace(value) || value.Length < 6)
                     throw new Exception("Password must be at least 6 characters.");
-                // if(!value.IsAlphaNumeric())
-                //     throw new Exception("Password can only contain alphanumeric characters and underscores.");
+                 if(!value.IsAlphaNumeric())
+                     throw new Exception("Password can only contain alphanumeric characters and underscores.");
                 password = value;
             }
         }

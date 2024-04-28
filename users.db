@@ -3,5 +3,10 @@
     "Username": "testing",
     "Password": "testing",
     "AccessLevel": 1
+  },
+  "tester": {
+    "Username": "tester",
+    "Password": "tester",
+    "AccessLevel": 1
   }
 }

@@ -1,26 +1,44 @@
+using System.Text.Json.Nodes;
 using Microsoft.AspNetCore.Mvc;
 
 namespace KnowledgeBase;
 
 [ApiController]
 [Route("User")]
+[Produces("application/json")]
 public class UserController : ControllerBase
 {
     private readonly ILogger<UserController> _logger;
 
     public UserController(ILogger<UserController> logger)
     {
+        UserDB.LoadFromFile();
         _logger = logger;
     }
 
-    [Route("Add/{username}/{password}/{accessLevel}")]
-    public string Set(string username, string password, int accessLevel)
+    [Route("Add")]
+    public string Add([FromBody] JsonObject userInfo)
     {
-        Response.Headers.Add("Access-Control-Allow-Origin", "*");
+        if(userInfo is null){
+            return "User info cannot be null.";
+        }
+
+        var username = userInfo["userInfo"]?["username"]?.ToString();
+        var password = userInfo["userInfo"]?["password"]?.ToString();
+        var accessLevel = userInfo["userInfo"]?["accessLevel"]?.ToString();
+        int accessLevelInt;
+
+        if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password) || string.IsNullOrEmpty(accessLevel) )
+        {
+            return "Username, password, or access level cannot be null.";
+        }
+        else{
+            accessLevelInt = Int32.Parse(accessLevel);
+        }
 
         try
         {
-            UserDB.AddUser(username, password, accessLevel);
+            UserDB.AddUser(username, password, accessLevelInt);
             UserDB.SaveToFile();
         }
 
@@ -31,14 +49,25 @@ public class UserController : ControllerBase
         return "User added successfully";
     }
 
-    [Route("Login/{username}/{password}")]
-    public string Get(string username, string password)
+    [Route("Login")]
+    public string Login([FromBody] JsonObject userInfo)
     {
-        Response.Headers.Add("Access-Control-Allow-Origin", "*");
-        var verified = false;
+        bool verified;
+
+        if(userInfo is null){
+            return "User info cannot be null.";
+        }
+
+        var username = userInfo["userInfo"]?["username"]?.ToString();
+        var password = userInfo["userInfo"]?["password"]?.ToString();
+
+        if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
+        {
+            return "Username or password cannot be null.";
+        }
+
         try
         {
-            UserDB.LoadFromFile();
             verified = UserDB.VerifyUser(username, password);
         }
 
@@ -56,14 +85,29 @@ public class UserController : ControllerBase
         }
     }
 
-    [Route("Remove/{username}")]
-    public string Set(string username)
+    [Route("Remove")]
+    public string Remove([FromBody] JsonObject userInfo)
     {
-        Response.Headers.Add("Access-Control-Allow-Origin", "*");
+        if(userInfo is null){
+            return "User info cannot be null.";
+        }
+
+        var username = userInfo["userInfo"]?["username"]?.ToString();
+        var password = userInfo["userInfo"]?["password"]?.ToString();
+        var accessLevel = userInfo["userInfo"]?["accessLevel"]?.ToString();
+        int accessLevelInt;
+
+        if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password) || string.IsNullOrEmpty(accessLevel) )
+        {
+            return "Username, password, or access level cannot be null.";
+        }
+        else{
+            accessLevelInt = Int32.Parse(accessLevel);
+        }
+
         try
         {
-            UserDB.LoadFromFile();
-            UserDB.RemoveUser(username);
+            UserDB.RemoveUser(username); //Update to include password and accessLevel
         }
 
         catch (Exception e)
