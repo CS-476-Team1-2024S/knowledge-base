@@ -11,7 +11,6 @@ Publishing to webserver? Use: 140.146.23.39
 ## Users
 Add - https://{host}:5001/User/Add
 ```
-(Request body)
 {
     "userInfo":
     {
@@ -24,7 +23,6 @@ Add - https://{host}:5001/User/Add
 
 Login - https://{host}:5001/User/Login
 ```
-(Request body)
 {
     "userInfo":
     {
@@ -36,7 +34,6 @@ Login - https://{host}:5001/User/Login
 
 Remove - https://{host}:5001/User/Remove
 ```
-(Request body)
 {
     "userInfo":
     {
@@ -49,7 +46,6 @@ Remove - https://{host}:5001/User/Remove
 ## Directories
 Create - https://{host}:5001/Directory/Create
 ```
-(Request body)
 {
     "directoryInfo":
     {
@@ -60,7 +56,6 @@ Create - https://{host}:5001/Directory/Create
 
 Move - https://{host}:5001/Directory/Move
 ```
-(Request body)
 {
     "directoryInfo":
     {
@@ -72,7 +67,6 @@ Move - https://{host}:5001/Directory/Move
 
 Delete - https://{host}:5001/Directory/Delete
 ```
-(Request body)
 {
     "directoryInfo":
     {
@@ -89,7 +83,6 @@ Returns directories and files in 'root'
 ## Files
 Create - https://{host}:5001/File/Create
 ```
-(Request body)
 {
     "fileInfo":
     {
@@ -100,7 +93,6 @@ Create - https://{host}:5001/File/Create
 
 Move - https://{host}:5001/File/Move
 ```
-(Request body)
 {
     "fileInfo":
     {
@@ -112,7 +104,6 @@ Move - https://{host}:5001/File/Move
 
 Delete - https://{host}:5001/File/Delete
 ```
-(Request body)
 {
     "fileInfo":
     {
@@ -123,7 +114,6 @@ Delete - https://{host}:5001/File/Delete
 
 Write - https://{host}:5001/File/Write
 ```
-(Request body)
 {
     "fileInfo":
     {
@@ -136,7 +126,6 @@ Write - https://{host}:5001/File/Write
 
 Read - https://{host}:5001/File/Read
 ```
-(Request body)
 {
     "fileInfo":
     {
