@@ -32,7 +32,7 @@ public class FileController : ControllerBase
 
         try
         {
-            File newFile = KnowledgeBase.File.Create(root.Info.FullName + @"\" + path);
+            File newFile = KnowledgeBase.File.Create(root.Info.FullName + @"/" + path);
         }
         catch(Exception e)
         {
@@ -55,10 +55,10 @@ public class FileController : ControllerBase
             return "Source and destination paths cannot be null.";
         }
 
-        File source = new File(root.Info.FullName + @"\" + sourcePath);
-        Directory dest = new Directory(root.Info.FullName + @"\" + destPath);
         try
         {
+            File source = new File(root.Info.FullName + @"/" + sourcePath);
+            Directory dest = new Directory(root.Info.FullName + @"/" + destPath);
             source.Move(dest);
         }
         catch (Exception e)
@@ -82,9 +82,9 @@ public class FileController : ControllerBase
             return "Path cannot be null.";
         }
 
-        File source = new File(root.Info.FullName + @"\" + path);
         try
         {
+            File source = new File(root.Info.FullName + @"/" + path);
             source.Delete();
         }
         catch (Exception e)
@@ -111,9 +111,9 @@ public class FileController : ControllerBase
             return "Path and content cannot be null.";
         }
 
-        File source = new File(root.Info.FullName + @"\" + path);
         try
         {
+            File source = new File(root.Info.FullName + @"/" + path);
             if(appendBool){
                 source.Write(content, true);
             }
@@ -143,9 +143,9 @@ public class FileController : ControllerBase
             return "Path cannot be null.";
         }
 
-        File source = new File(root.Info.FullName + @"\" + path);
         try
         {
+            File source = new File(root.Info.FullName + @"/" + path);
             content = source.Read();
         }
         catch (Exception e)

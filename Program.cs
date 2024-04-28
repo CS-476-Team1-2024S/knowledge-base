@@ -3,7 +3,7 @@
 const string host = "localhost"; //Change depending on local or production environment
 
 // Add services to the container.
-builder.WebHost.UseUrls($"http://{host}:5000", $"https://{host}:5001");
+builder.WebHost.UseUrls($"https://{host}:5001");
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

@@ -32,7 +32,7 @@ public class DirectoryController : ControllerBase
 
         try
         {
-            root = Directory.Create(root.Info.FullName + @"\" + path);
+            root = Directory.Create(root.Info.FullName + @"/" + path);
         }
         catch (Exception e)
         {
@@ -56,10 +56,10 @@ public class DirectoryController : ControllerBase
             return "Source and destination paths cannot be null.";
         }
 
-        Directory source = new Directory(root.Info.FullName + @"\" + sourcePath);
-        Directory dest = new Directory(root.Info.FullName + @"\" + destPath);
         try
         {
+            Directory source = new Directory(root.Info.FullName + @"/" + sourcePath);
+            Directory dest = new Directory(root.Info.FullName + @"/" + destPath);
             source.Move(dest);
         }
         catch (Exception e)
@@ -83,9 +83,9 @@ public class DirectoryController : ControllerBase
             return "Path cannot be null.";
         }
 
-        Directory source = new Directory(root.Info.FullName + @"\" + path);
         try
         {
+            Directory source = new Directory(root.Info.FullName + @"/" + path);
             source.Delete();
         }
         catch (Exception e)
