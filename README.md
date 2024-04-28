@@ -11,7 +11,7 @@ Add - https://{host}:5001/User/Add
     "userInfo":
     {
         "username": "",
-        "password":"",
+        "password": "",
         "accessLevel": ""
     }
 }
@@ -24,7 +24,7 @@ Login - https://{host}:5001/User/Login
     "userInfo":
     {
         "username": "",
-        "password":""
+        "password": ""
     }
 }
 ```
