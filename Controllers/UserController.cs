@@ -28,8 +28,7 @@ public class UserController : ControllerBase
         var accessLevel = userInfo["userInfo"]?["accessLevel"]?.ToString();
         int accessLevelInt;
 
-        if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password) || string.IsNullOrEmpty(accessLevel) )
-        {
+        if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password) || string.IsNullOrEmpty(accessLevel)){
             return "Username, password, or access level cannot be null.";
         }
         else{
@@ -41,11 +40,11 @@ public class UserController : ControllerBase
             UserDB.AddUser(username, password, accessLevelInt);
             UserDB.SaveToFile();
         }
-
         catch (Exception e)
         {
             return e.Message;
         }
+
         return "User added successfully";
     }
 
@@ -61,8 +60,7 @@ public class UserController : ControllerBase
         var username = userInfo["userInfo"]?["username"]?.ToString();
         var password = userInfo["userInfo"]?["password"]?.ToString();
 
-        if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
-        {
+        if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password)){
             return "Username or password cannot be null.";
         }
 
@@ -70,17 +68,15 @@ public class UserController : ControllerBase
         {
             verified = UserDB.VerifyUser(username, password);
         }
-
         catch (Exception e)
         {
             return e.Message;
         }
-        if (verified)
-        {
+
+        if (verified){
             return "User logged in successfully";
         }
-        else
-        {
+        else{
             return "Username or password is incorrect.";
         }
     }
@@ -97,8 +93,7 @@ public class UserController : ControllerBase
         var accessLevel = userInfo["userInfo"]?["accessLevel"]?.ToString();
         int accessLevelInt;
 
-        if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password) || string.IsNullOrEmpty(accessLevel) )
-        {
+        if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password) || string.IsNullOrEmpty(accessLevel) ){
             return "Username, password, or access level cannot be null.";
         }
         else{
@@ -109,11 +104,11 @@ public class UserController : ControllerBase
         {
             UserDB.RemoveUser(username); //Update to include password and accessLevel
         }
-
         catch (Exception e)
         {
             return e.Message;
         }
-            return "User was removed";
+        
+        return "User was removed";
     }
 }

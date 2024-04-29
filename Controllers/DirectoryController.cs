@@ -100,6 +100,7 @@ public class DirectoryController : ControllerBase
     public string Scan()
     {
         string directories;
+        
         try
         {
             directories = root.ToString();
