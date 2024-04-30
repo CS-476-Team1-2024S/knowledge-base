@@ -1,3 +1,4 @@
+using System.IO.Compression;
 using System.Text;
 namespace KnowledgeBase
 {
@@ -10,7 +11,17 @@ namespace KnowledgeBase
             if(System.IO.File.Exists(path))
                 Info = new(path);
             else
-                throw new FileNotFoundException($"{path} does not exist.");
+            {
+                try
+                {
+                    System.IO.File.Create(path).Close();
+                    Info = new(path);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.Message);
+                }
+            }
         }
         public static File Create(string path)
         {
@@ -31,7 +42,7 @@ namespace KnowledgeBase
         {
             byte[] bytes = Encoding.UTF8.GetBytes(content);
             FileMode fm = append ? FileMode.Append : FileMode.Create;
-            using FileStream fs = new(this.Info.FullName,fm);
+            using FileStream fs = new(this.Info.FullName, fm);
             fs.Write(bytes);
         }
         public string Read()

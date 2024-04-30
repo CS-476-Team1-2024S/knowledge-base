@@ -1,20 +1,18 @@
 using System.Text.Json.Nodes;
 using Microsoft.AspNetCore.Mvc;
 
-namespace KnowledgeBase;
+namespace KnowledgeBase.Controllers;
 
 [ApiController]
 [Route("Directory")]
 [Produces("application/json")]
 public class DirectoryController : ControllerBase
 {
-    private readonly ILogger<DirectoryController> _logger;
     private Directory root;
 
-    public DirectoryController(ILogger<DirectoryController> logger)
+    public DirectoryController()
     {
         root = new Directory("root");
-        _logger = logger;
     }
 
     [Route("Create")]

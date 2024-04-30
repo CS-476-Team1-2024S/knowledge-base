@@ -1,19 +1,17 @@
 using System.Text.Json.Nodes;
 using Microsoft.AspNetCore.Mvc;
 
-namespace KnowledgeBase;
+namespace KnowledgeBase.Controllers;
 
 [ApiController]
 [Route("User")]
 [Produces("application/json")]
 public class UserController : ControllerBase
 {
-    private readonly ILogger<UserController> _logger;
 
-    public UserController(ILogger<UserController> logger)
+    public UserController()
     {
         UserDB.LoadFromFile();
-        _logger = logger;
     }
 
     [Route("Add")]

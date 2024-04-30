@@ -1,5 +1,8 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-# builds
+# builds and tests
+/KnowledgeBase.Tests/bin
+/KnowledgeBase.Tests/obj
+/KnowledgeBase/TestResults
 /obj
 /bin

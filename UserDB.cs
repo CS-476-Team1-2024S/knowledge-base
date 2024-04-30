@@ -48,7 +48,9 @@ namespace KnowledgeBase
                         db = deserializedDb;
                     }
                 }
-                catch {}
+                catch (Exception e) {
+                    Console.WriteLine(e.Message);
+                }
             }
         }
     }

@@ -1,20 +1,18 @@
 using System.Text.Json.Nodes;
 using Microsoft.AspNetCore.Mvc;
 
-namespace KnowledgeBase;
+namespace KnowledgeBase.Controllers;
 
 [ApiController]
 [Route("File")]
 [Produces("application/json")]
 public class FileController : ControllerBase
 {
-    private readonly ILogger<FileController> _logger;
     private Directory root;
 
-    public FileController(ILogger<FileController> logger)
+    public FileController()
     {
         root = new Directory("root");
-        _logger = logger;
     }
 
     [Route("Create")]
@@ -38,6 +36,7 @@ public class FileController : ControllerBase
         {
             return e.Message;
         }
+        
         return "File created";
     }
 
