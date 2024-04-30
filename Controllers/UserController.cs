@@ -43,7 +43,7 @@ public class UserController : ControllerBase
             return e.Message;
         }
 
-        return "User added successfully";
+        return "User added successfully.";
     }
 
     [Route("Login")]
@@ -72,7 +72,7 @@ public class UserController : ControllerBase
         }
 
         if (verified){
-            return "User logged in successfully";
+            return "User logged in successfully.";
         }
         else{
             return "Username or password is incorrect.";
@@ -107,6 +107,6 @@ public class UserController : ControllerBase
             return e.Message;
         }
         
-        return "User was removed";
+        return "User was removed successfully.";
     }
 }

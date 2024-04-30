@@ -20,7 +20,7 @@ public class UserControllerTests
                 ["accessLevel"] = "1"
             }
         });
-        Assert.AreEqual("User added successfully", result);
+        Assert.AreEqual("User added successfully.", result);
     }
 
     [TestMethod]
@@ -51,7 +51,7 @@ public class UserControllerTests
                 ["password"] = "testUser"
             }
         });
-        Assert.AreEqual("User logged in successfully", result);
+        Assert.AreEqual("User logged in successfully.", result);
     }
 
     [TestMethod]
@@ -96,7 +96,7 @@ public class UserControllerTests
                 ["accessLevel"] = "1"
             }
         });
-        Assert.AreEqual("User was removed", result);
+        Assert.AreEqual("User was removed successfully.", result);
     }
 
     [TestMethod]

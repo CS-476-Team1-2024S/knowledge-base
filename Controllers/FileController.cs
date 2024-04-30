@@ -37,7 +37,7 @@ public class FileController : ControllerBase
             return e.Message;
         }
         
-        return "File created";
+        return "File created successfully.";
     }
 
     [Route("Move")]
@@ -65,7 +65,7 @@ public class FileController : ControllerBase
             return e.Message;
         }
 
-        return "File moved successfully";
+        return "File moved successfully.";
     }
 
     [Route("Delete")]
@@ -91,7 +91,7 @@ public class FileController : ControllerBase
             return e.Message;
         }
 
-        return "File deleted successfully";
+        return "File deleted successfully.";
     }
 
     [Route("Write")]
@@ -125,7 +125,7 @@ public class FileController : ControllerBase
             return e.Message;
         }
 
-        return "File written successfully";
+        return "File written successfully.";
     }
 
     [Route("Read")]

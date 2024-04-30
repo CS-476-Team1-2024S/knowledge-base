@@ -1,8 +1,7 @@
-using System.IO.Compression;
 using System.Text;
 namespace KnowledgeBase
 {
-    class File
+    public class File
     {
         public FileInfo Info { get; set; }
         public File(string path)

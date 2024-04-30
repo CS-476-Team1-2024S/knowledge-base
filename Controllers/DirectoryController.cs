@@ -37,7 +37,7 @@ public class DirectoryController : ControllerBase
             return e.Message;
         }
 
-        return "Directory created successfully";
+        return "Directory created successfully.";
     }
 
     [Route("Move")]
@@ -65,7 +65,7 @@ public class DirectoryController : ControllerBase
             return e.Message;
         }
 
-        return "Directory moved successfully";
+        return "Directory moved successfully.";
     }
 
     [Route("Delete")]
@@ -91,7 +91,7 @@ public class DirectoryController : ControllerBase
             return e.Message;
         }
 
-        return "Directory deleted successfully";
+        return "Directory deleted successfully.";
     }
 
     [Route("Scan")]
