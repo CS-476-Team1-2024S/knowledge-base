@@ -4,9 +4,9 @@
 Check [here](https://github.com/CS-476-Team1-2024S/website_ui/blob/LB-addingUserAPI/src/hooks/Login.js) for and example on how to implement this on front-end (react) 
 
 For {host}:</br>
-Local testing? Use: localhost</br>
-Using Washington VPN? (local)? Use: 140.146.23.39</br>
-Publishing to webserver? Use: 140.146.23.39
+!Must be on washington VPN unless you set 'localhost' on API AND on front-end!</br>
+Using Washington VPN? Use: 140.146.23.39</br>
+!If you encounter issues fetching, go to https://140.146.23.39:5001/Directory/Scan and view webpage, then try again!
 
 ## Users
 Add - https://{host}:5001/User/Add
