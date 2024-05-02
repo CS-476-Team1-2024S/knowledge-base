@@ -70,7 +70,7 @@ namespace KnowledgeBase
                     }
                 }
             }
-            var rankedFiles = fileScores.OrderByDescending(pair => pair.Value).Select(pair => pair.Key.Split(@"\")[Array.IndexOf(pair.Key.Split(@"\"), "root") + 1]).ToList(); // Rank documents by score
+            var rankedFiles = fileScores.OrderByDescending(pair => pair.Value).Select(pair => pair.Key).ToList(); // Rank documents by score
             return rankedFiles;
         }
     }
