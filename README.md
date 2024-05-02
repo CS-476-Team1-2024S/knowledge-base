@@ -133,3 +133,14 @@ Read - https://{host}:5001/File/Read
     }
 }
 ```
+
+## Search
+Query - https://{host}:5001/Search/Query
+```
+{
+    "searchInfo":
+    {
+        "query": ""
+    }
+}
+```
