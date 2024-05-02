@@ -6,9 +6,17 @@ namespace KnowledgeBase.Tests;
 [TestClass]
 public class DirectoryControllerTests
 {
-    private Directory root = new Directory("root");
-    private Directory testDirectoryTwo = new Directory("root/testDirectoryTwo");
-    private DirectoryController directoryController = new DirectoryController();
+    private DirectoryInfo root;
+    private DirectoryInfo testDirectoryTwo;
+    private DirectoryController directoryController;
+
+    [TestInitialize]
+    public void Startup()
+    {
+         root = System.IO.Directory.CreateDirectory("root");
+         testDirectoryTwo = System.IO.Directory.CreateDirectory("root/testDirectoryTwo");
+         directoryController = new DirectoryController();
+    }
 
     [TestMethod]
     public void DirectoryController_Create_ValidInput_ReturnsSuccessful()
@@ -41,6 +49,7 @@ public class DirectoryControllerTests
     [TestMethod]
     public void DirectoryController_Move_ValidInput_ReturnsSuccessful()
     {
+        System.IO.Directory.CreateDirectory("root/testDirectory");
         var result = directoryController.Move(new JsonObject
         {
             ["directoryInfo"] = new JsonObject
@@ -99,6 +108,6 @@ public class DirectoryControllerTests
     [TestCleanup]
     public void Cleanup()
     {
-        root.Delete();
+        root.Delete(true);
     }
 }

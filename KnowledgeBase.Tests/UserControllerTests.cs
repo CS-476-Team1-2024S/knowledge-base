@@ -6,7 +6,16 @@ namespace KnowledgeBase.Tests;
 [TestClass]
 public class UserControllerTests
 {
-    private UserController userController = new UserController();
+    private FileStream userDBFile;
+    private UserController userController;
+
+    [TestInitialize]
+    public void Startup()
+    {
+        userDBFile = System.IO.File.Create("Users.db");
+        userDBFile.Close();
+        userController = new UserController();
+    }
 
     [TestMethod]
     public void UserController_Add_ValidInput_ReturnsSuccessful()

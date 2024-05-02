@@ -5,18 +5,18 @@ namespace KnowledgeBase
 {
     class FileIndexer
     {
-        private static Dictionary<string, Dictionary<string, int>> wordCounts = [];
-        private static Dictionary<string, int> documentFrequency = [];
-        private static Dictionary<string, int> totalWordsPerDocument = [];
-        private static int totalDocuments;
-        public static void IndexDirectory(Directory root)
+        private Dictionary<string, Dictionary<string, int>> wordCounts = [];
+        private Dictionary<string, int> documentFrequency = [];
+        private Dictionary<string, int> totalWordsPerDocument = [];
+        private int totalDocuments;
+        public void IndexDirectory(Directory root)
         {
             foreach (var sub in root.Info.EnumerateDirectories())
                 IndexDirectory(new(sub.FullName));
             foreach (var file in root.Info.EnumerateFiles())
                 IndexFile(new(file.FullName));
         }
-        public static void IndexFile(File file)
+        public void IndexFile(File file)
         {
             string content = file.Read();
             string[] words = Regex.Split(content.ToLower(), @"\W+");
@@ -45,7 +45,7 @@ namespace KnowledgeBase
             totalDocuments++;
         }
         // Term Frequency-Inverse Document Frequency
-        public static List<string> SearchTFIDF(string query)
+        public List<string> SearchTFIDF(string query)
         {
             Dictionary<string, double> fileScores = [];
 
@@ -70,7 +70,7 @@ namespace KnowledgeBase
                     }
                 }
             }
-            var rankedFiles = fileScores.OrderByDescending(pair => pair.Value).Select(pair => pair.Key).ToList(); // Rank documents by score
+            var rankedFiles = fileScores.OrderByDescending(pair => pair.Value).Select(pair => pair.Key.Split(@"\")[Array.IndexOf(pair.Key.Split(@"\"), "root") + 1]).ToList(); // Rank documents by score
             return rankedFiles;
         }
     }

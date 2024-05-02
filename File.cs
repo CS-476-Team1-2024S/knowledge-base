@@ -11,15 +11,7 @@ namespace KnowledgeBase
                 Info = new(path);
             else
             {
-                try
-                {
-                    System.IO.File.Create(path).Close();
-                    Info = new(path);
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e.Message);
-                }
+                throw new ArgumentException($"{path} doesn't exist.");
             }
         }
         public static File Create(string path)
