@@ -1,6 +1,6 @@
 ﻿var builder = WebApplication.CreateBuilder(args);
 
-const string host = "localhost"; //Change depending on local or production environment
+const string host = "140.146.23.39"; //Change depending on local or production environment
 
 // Add services to the container.
 builder.WebHost.UseUrls($"https://{host}:5001");

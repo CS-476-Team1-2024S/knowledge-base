@@ -6,8 +6,15 @@ namespace KnowledgeBase.Tests;
 [TestClass]
 public class FileControllerTests
 {
-    private Directory root = new Directory("root");
-    private FileController fileController = new FileController();
+    private DirectoryInfo root;
+    private FileController fileController;
+
+    [TestInitialize]
+    public void Startup()
+    {
+        root = System.IO.Directory.CreateDirectory("root");
+        fileController = new FileController();
+    }
 
     [TestMethod]
     public void FileController_Create_ValidInput_ReturnsSuccessful()
@@ -160,6 +167,6 @@ public class FileControllerTests
 
     public void Cleanup()
     {
-        root.Delete();
+        root.Delete(true);
     }
 }

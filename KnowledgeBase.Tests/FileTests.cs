@@ -3,9 +3,19 @@ namespace KnowledgeBase.Tests;
 [TestClass]
 public class FileTests
 {
-    Directory root = new Directory("root");
-    Directory insideRoot = new Directory("root/insideRoot");
-    File testFile = new File("root/insideRoot/test.txt");
+    Directory root;
+    Directory insideRoot;
+    File testFile;
+
+    [TestInitialize]
+    public void Setup()
+    {
+        System.IO.Directory.CreateDirectory("root");
+        System.IO.Directory.CreateDirectory("root/insideRoot");
+        root = new Directory("root");
+        insideRoot = new Directory("root/insideRoot");
+        testFile = File.Create("root/insideRoot/test.txt");
+    }
 
     [TestMethod]
     public void File_Create_ValidInput_ReturnsPath()

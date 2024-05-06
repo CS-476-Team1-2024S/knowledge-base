@@ -9,15 +9,7 @@ namespace KnowledgeBase
             if(System.IO.Directory.Exists(path))
                 Info = new(path);
             else
-                try
-                {
-                    System.IO.Directory.CreateDirectory(path);
-                    Info = new(path);
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e.Message);
-                }
+                throw new ArgumentException($"{path} doesn't exist.");
         }
         public static Directory Create(string path)
         {

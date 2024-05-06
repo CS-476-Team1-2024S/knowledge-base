@@ -12,7 +12,16 @@ public class DirectoryController : ControllerBase
 
     public DirectoryController()
     {
-        root = new Directory("root");
+        try{
+            root = new Directory("root");
+        }
+        catch(Exception e){
+            Console.WriteLine(e.Message + "\nCreating root directory.");
+            System.IO.Directory.CreateDirectory("root");
+        }
+        finally{
+            root = new Directory("root");
+        }
     }
 
     [Route("Create")]

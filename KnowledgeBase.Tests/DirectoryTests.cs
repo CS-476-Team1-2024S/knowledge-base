@@ -3,9 +3,20 @@ namespace KnowledgeBase.Tests;
 [TestClass]
 public class DirectoryTests
 {
-    Directory root = new Directory("root");
-    Directory insideRoot = new Directory("root/rootAgain");
-    Directory rootInsideRoot = new Directory("root/rootAgain/rootInsideRoot");
+    Directory root;
+    Directory insideRoot;
+    Directory rootInsideRoot;
+
+    [TestInitialize]
+    public void Startup()
+    {
+        System.IO.Directory.CreateDirectory("root");
+        System.IO.Directory.CreateDirectory("root/rootAgain");
+        System.IO.Directory.CreateDirectory("root/rootAgain/rootInsideRoot");
+        root = new Directory("root");
+        insideRoot = new Directory("root/rootAgain");
+        rootInsideRoot = new Directory("root/rootAgain/rootInsideRoot");
+    }
 
     [TestMethod]
     public void Directory_Create_ValidInput_ReturnsPath()
