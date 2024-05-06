@@ -13,14 +13,11 @@ public class DirectoryController : ControllerBase
     public DirectoryController()
     {
         try{
-            root = new Directory("root");
+            root = new Directory(Path.Combine(System.IO.Directory.GetCurrentDirectory(),"root"));
         }
         catch(Exception e){
             Console.WriteLine(e.Message + "\nCreating root directory.");
-            System.IO.Directory.CreateDirectory("root");
-        }
-        finally{
-            root = new Directory("root");
+            root = Directory.Create("root");
         }
     }
 
@@ -31,15 +28,11 @@ public class DirectoryController : ControllerBase
             return "Directory info cannot be null.";
         }
 
-        var path = directoryInfo["directoryInfo"]?["path"]?.ToString();
-
-        if(string.IsNullOrEmpty(path)){
-            return "Path cannot be null.";
-        }
+        string? path = directoryInfo["directoryInfo"]?["path"]?.ToString();
 
         try
         {
-            root = Directory.Create(root.Info.FullName + @"/" + path);
+            Directory newDir = Directory.Create(root.Info.FullName + @"/" + path);
         }
         catch (Exception e)
         {

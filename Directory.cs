@@ -5,16 +5,18 @@ namespace KnowledgeBase
     public class Directory
     {
         public DirectoryInfo Info { get; set; }
-        public Directory(string path)
+        public Directory(string? path)
         {
+            ArgumentNullException.ThrowIfNull(path,"Path");
             if(System.IO.Directory.Exists(path))
                 Info = new(path);
             else
                 throw new ArgumentException($"{path} doesn't exist.");
         }
-        public static Directory Create(string path)
+        public static Directory Create(string? path)
         {
-            if(System.IO.Directory.Exists(path))
+            ArgumentNullException.ThrowIfNull(path,"Path");
+            if (System.IO.Directory.Exists(path))
                 throw new ArgumentException($"{path} already exists.");
             System.IO.Directory.CreateDirectory(path);
             return new Directory(path);

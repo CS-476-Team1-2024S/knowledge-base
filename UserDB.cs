@@ -35,6 +35,13 @@ namespace KnowledgeBase
             }
             return null;
         }
+        public static void Logout(string token)
+        {
+            tokenUsername.TryGetValue(token, out User? value);
+            if(value == null)
+                throw new ArgumentException("Invalid Token");
+            tokenUsername.Remove(token);
+        }
         public static string? VerifyToken(string token)
         {
             if (tokenUsername.TryGetValue(token, out User? value))
