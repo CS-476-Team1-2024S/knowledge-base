@@ -6,7 +6,8 @@ namespace KnowledgeBase
         public FileInfo Info { get; set; }
         public File(string path)
         {
-            // Will create a new file if it does not exist 
+            if(string.IsNullOrWhiteSpace(path))
+                throw new ArgumentNullException(nameof(path),"Path cannot be null.");
             if(System.IO.File.Exists(path))
                 Info = new(path);
             else
@@ -16,6 +17,8 @@ namespace KnowledgeBase
         }
         public static File Create(string path)
         {
+            if(string.IsNullOrWhiteSpace(path))
+                throw new ArgumentNullException(nameof(path),"Path cannot be null.");
             if(System.IO.File.Exists(path))
                 throw new ArgumentException($"{path} already exists.");
             System.IO.File.Create(path).Close();
@@ -31,6 +34,8 @@ namespace KnowledgeBase
         }
         public void Write(string content, bool append = false)
         {
+            if(string.IsNullOrEmpty(content))
+                throw new ArgumentNullException(nameof(content),"Content cannot be empty or null.");
             byte[] bytes = Encoding.UTF8.GetBytes(content);
             FileMode fm = append ? FileMode.Append : FileMode.Create;
             using FileStream fs = new(this.Info.FullName, fm);

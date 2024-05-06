@@ -13,14 +13,11 @@ public class FileController : ControllerBase
     public FileController()
     {
         try{
-            root = new Directory("root");
+            root = new Directory(Path.Combine(System.IO.Directory.GetCurrentDirectory(),"root"));
         }
         catch(Exception e){
             Console.WriteLine(e.Message + "\nCreating root directory.");
-            System.IO.Directory.CreateDirectory("root");
-        }
-        finally{
-            root = new Directory("root");
+            root = Directory.Create(Path.Combine(System.IO.Directory.GetCurrentDirectory(),"root"));
         }
     }
 
@@ -32,14 +29,9 @@ public class FileController : ControllerBase
         }
 
         var path = fileInfo["fileInfo"]?["path"]?.ToString();
-
-        if(string.IsNullOrEmpty(path)){
-            return "Path cannot be null.";
-        }
-
         try
         {
-            File newFile = KnowledgeBase.File.Create(root.Info.FullName + @"/" + path);
+            File newFile = KnowledgeBase.File.Create(Path.Combine(System.IO.Directory.GetCurrentDirectory(), path));
         }
         catch(Exception e)
         {
@@ -59,14 +51,10 @@ public class FileController : ControllerBase
         var sourcePath = fileInfo["fileInfo"]?["source"]?.ToString();
         var destPath = fileInfo["fileInfo"]?["destination"]?.ToString();
 
-        if(string.IsNullOrEmpty(sourcePath) || string.IsNullOrEmpty(destPath)){
-            return "Source and destination paths cannot be null.";
-        }
-
         try
         {
-            File source = new File(root.Info.FullName + @"/" + sourcePath);
-            Directory dest = new Directory(root.Info.FullName + @"/" + destPath);
+            File source = new(Path.Combine(System.IO.Directory.GetCurrentDirectory(), sourcePath));
+            Directory dest = new(Path.Combine(System.IO.Directory.GetCurrentDirectory(), destPath));
             source.Move(dest);
         }
         catch (Exception e)
@@ -85,14 +73,10 @@ public class FileController : ControllerBase
         }
 
         var path = fileInfo["fileInfo"]?["path"]?.ToString();
-
-        if(string.IsNullOrEmpty(path)){
-            return "Path cannot be null.";
-        }
-
+        
         try
         {
-            File source = new File(root.Info.FullName + @"/" + path);
+            File source = new(Path.Combine(System.IO.Directory.GetCurrentDirectory(), path));
             source.Delete();
         }
         catch (Exception e)
@@ -113,21 +97,15 @@ public class FileController : ControllerBase
         var path = fileInfo["fileInfo"]?["path"]?.ToString();
         var content = fileInfo["fileInfo"]?["content"]?.ToString();
         var append = fileInfo["fileInfo"]?["append"]?.ToString();
-        bool.TryParse(append, out bool appendBool);
-
-        if(string.IsNullOrEmpty(path) || string.IsNullOrEmpty(content)){
-            return "Path and content cannot be null.";
+        if(!bool.TryParse(append, out bool appendBool))
+        {
+            return "Append is an improper value";
         }
 
         try
         {
-            File source = new File(root.Info.FullName + @"/" + path);
-            if(appendBool){
-                source.Write(content, true);
-            }
-            else{
-                source.Write(content);
-            }
+            File source = new(Path.Combine(System.IO.Directory.GetCurrentDirectory(), path));
+            source.Write(content, appendBool );
         }
         catch (Exception e)
         {
@@ -147,13 +125,9 @@ public class FileController : ControllerBase
         var path = fileInfo["fileInfo"]?["path"]?.ToString();
         string content;
 
-        if(string.IsNullOrEmpty(path)){
-            return "Path cannot be null.";
-        }
-
         try
         {
-            File source = new File(root.Info.FullName + @"/" + path);
+            File source = new(Path.Combine(System.IO.Directory.GetCurrentDirectory(), path));
             content = source.Read();
         }
         catch (Exception e)
