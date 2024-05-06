@@ -85,7 +85,7 @@ namespace KnowledgeBase
         {
             DirectoryNode root = BuildTree(this.Info);
 
-            var options = new JsonSerializerOptions { WriteIndented = true };
+            var options = new JsonSerializerOptions { WriteIndented = false };
             string json = JsonSerializer.Serialize(root, options);
             return json;
         }
