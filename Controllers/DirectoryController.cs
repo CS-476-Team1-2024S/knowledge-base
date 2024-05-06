@@ -1,5 +1,6 @@
 using System.Text.Json.Nodes;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 
 namespace KnowledgeBase.Controllers;
 
@@ -17,7 +18,7 @@ public class DirectoryController : ControllerBase
         }
         catch(Exception e){
             Console.WriteLine(e.Message + "\nCreating root directory.");
-            root = Directory.Create("root");
+            root = Directory.Create(Path.Combine(System.IO.Directory.GetCurrentDirectory(),"root"));
         }
     }
 
@@ -32,7 +33,7 @@ public class DirectoryController : ControllerBase
 
         try
         {
-            Directory newDir = Directory.Create(root.Info.FullName + @"/" + path);
+            Directory newDir = Directory.Create(Path.Combine(System.IO.Directory.GetCurrentDirectory(), path) );
         }
         catch (Exception e)
         {
@@ -52,14 +53,10 @@ public class DirectoryController : ControllerBase
         var sourcePath = directoryInfo["directoryInfo"]?["source"]?.ToString();
         var destPath = directoryInfo["directoryInfo"]?["destination"]?.ToString();
 
-        if(string.IsNullOrEmpty(sourcePath) || string.IsNullOrEmpty(destPath)){
-            return "Source and destination paths cannot be null.";
-        }
-
         try
         {
-            Directory source = new Directory(root.Info.FullName + @"/" + sourcePath);
-            Directory dest = new Directory(root.Info.FullName + @"/" + destPath);
+            Directory source = new(Path.Combine(System.IO.Directory.GetCurrentDirectory(), sourcePath));
+            Directory dest = new(Path.Combine(System.IO.Directory.GetCurrentDirectory(), destPath));
             source.Move(dest);
         }
         catch (Exception e)
@@ -78,14 +75,10 @@ public class DirectoryController : ControllerBase
         }
 
         var path = directoryInfo["directoryInfo"]?["path"]?.ToString();
-
-        if(string.IsNullOrEmpty(path)){
-            return "Path cannot be null.";
-        }
-
+        
         try
         {
-            Directory source = new Directory(root.Info.FullName + @"/" + path);
+            Directory source = new(Path.Combine(System.IO.Directory.GetCurrentDirectory(), path));
             source.Delete();
         }
         catch (Exception e)
@@ -97,19 +90,22 @@ public class DirectoryController : ControllerBase
     }
 
     [Route("Scan")]
-    public string Scan()
+    public string Scan([FromBody] JsonObject directoryInfo)
     {
-        string directories;
+        if(directoryInfo is null){
+            return "Directory info cannot be null.";
+        }
+
+        var path = directoryInfo["directoryInfo"]?["path"]?.ToString();
         
         try
         {
-            directories = root.ToString();
+            Directory source = new(Path.Combine(System.IO.Directory.GetCurrentDirectory(), path));
+            return source.ToJSON();
         }
         catch (Exception e)
         {
             return e.Message;
         }
-
-        return directories;
     }
 }

@@ -1,4 +1,4 @@
-using System.ComponentModel;
+using System.Text.Json;
 using System.Text;
 namespace KnowledgeBase
 {
@@ -7,7 +7,8 @@ namespace KnowledgeBase
         public DirectoryInfo Info { get; set; }
         public Directory(string? path)
         {
-            ArgumentNullException.ThrowIfNull(path,"Path");
+            if(string.IsNullOrWhiteSpace(path))
+                throw new ArgumentNullException(nameof(path),"Path cannot be null.");
             if(System.IO.Directory.Exists(path))
                 Info = new(path);
             else
@@ -15,7 +16,8 @@ namespace KnowledgeBase
         }
         public static Directory Create(string? path)
         {
-            ArgumentNullException.ThrowIfNull(path,"Path");
+           if(string.IsNullOrWhiteSpace(path))
+                throw new ArgumentNullException(nameof(path),"Path cannot be null.");
             if (System.IO.Directory.Exists(path))
                 throw new ArgumentException($"{path} already exists.");
             System.IO.Directory.CreateDirectory(path);
@@ -30,45 +32,75 @@ namespace KnowledgeBase
             this.Info.Delete(true);
         }
         
-        // Format in json in Controller
-        public List<String> Scan()
+        // // Returns tuple of type List<String> of all directory and file paths
+        // public (List<String>,List<String>) Scan(bool relative = false)
+        // {
+        //     DirectoryInfo directoryInfo = this.Info;
+        //     List<String> directories = [];
+        //     List<String> files = [];
+
+        //     FileInfo[] fileInfos = directoryInfo.GetFiles("*", SearchOption.AllDirectories);
+        //     foreach(FileInfo fileInfo in fileInfos )
+        //     {
+        //         files.Add(fileInfo.FullName);
+        //     }
+
+        //     DirectoryInfo[] directoryInfos = directoryInfo.GetDirectories("*", SearchOption.AllDirectories);
+        //     foreach (DirectoryInfo dir in directoryInfos)
+        //     {
+        //         directories.Add(dir.FullName);
+        //     }
+        //     if(!relative)
+        //         return (directories, files);
+
+        //     // Get relative paths to the root
+        //     List<string> relativeDirectories = [];
+        //     List<string> relativeFiles = [];
+        //     foreach (string path in directories)
+        //     {
+        //         string relativePath = path[(directoryInfo.FullName.Length - directoryInfo.Name.Length)..];
+        //         relativeDirectories.Add(relativePath.TrimStart(Path.DirectorySeparatorChar));
+        //     }
+        //     foreach (string path in files)
+        //     {
+        //         string relativePath = path[(directoryInfo.FullName.Length - directoryInfo.Name.Length)..];
+        //         relativeFiles.Add(relativePath.TrimStart(Path.DirectorySeparatorChar));
+        //     }
+        //     return (relativeDirectories, relativeFiles);
+        // }
+        public static DirectoryNode BuildTree(DirectoryInfo directoryInfo)
         {
-            DirectoryInfo directoryInfo = this.Info;
-            List<String> paths = [];
-
-            FileInfo[] files = directoryInfo.GetFiles("*", SearchOption.AllDirectories);
-            foreach (FileInfo fileInfo in files)
+            var node = new DirectoryNode(directoryInfo.Name);
+            foreach (FileInfo file in directoryInfo.GetFiles())
             {
-                paths.Add(fileInfo.FullName);
+                node.AddFile(file.Name);
             }
-
-            // Get all directories in the directory and its subdirectories
-            DirectoryInfo[] directories = directoryInfo.GetDirectories("*", SearchOption.AllDirectories);
-            foreach (DirectoryInfo dir in directories)
+            foreach (DirectoryInfo subDir in directoryInfo.GetDirectories())
             {
-                paths.Add(dir.FullName);
+                node.AddSubdirectory(BuildTree(subDir));
             }
-            List<string> relativePaths = [];
-            foreach (string path in paths)
-            {
-                string relativePath = path[(directoryInfo.FullName.Length - directoryInfo.Name.Length)..];
-                relativePaths.Add(relativePath.TrimStart(Path.DirectorySeparatorChar));
-            }
+            return node;
+        }
+        public string ToJSON()
+        {
+            DirectoryNode root = BuildTree(this.Info);
 
-            return relativePaths;
+            var options = new JsonSerializerOptions { WriteIndented = true };
+            string json = JsonSerializer.Serialize(root, options);
+            return json;
         }
         public override string ToString()
         {
-            return Print(this.Info);
+            return ToStringHelper(this.Info);
         }
-        private static string Print(DirectoryInfo root, int level = 0)
+        private static string ToStringHelper(DirectoryInfo root, int level = 0)
         {
             StringBuilder builder = new();
 
             builder.AppendLine(string.Concat(Enumerable.Repeat("    ", level)) + "¬" + root.Name);
 
             foreach (var sub in root.EnumerateDirectories())
-                builder.Append(Print(sub, level + 1));
+                builder.Append(ToStringHelper(sub, level + 1));
             foreach (var file in root.EnumerateFiles())
                 builder.AppendLine(string.Concat(Enumerable.Repeat("    ", level + 1)) + "¬" + file.Name);
 

@@ -37,7 +37,9 @@ namespace KnowledgeBase
     {
         static void Main()
         {
-            
+            Directory dir = new Directory(Path.Combine(System.IO.Directory.GetCurrentDirectory(),"Root"));
+            var relative = dir.ToJSON();
+            Console.WriteLine(relative);
         }
     }
 }
