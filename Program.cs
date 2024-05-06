@@ -1,32 +1,43 @@
-﻿var builder = WebApplication.CreateBuilder(args);
+﻿// var builder = WebApplication.CreateBuilder(args);
 
-const string host = "140.146.23.39"; //Change depending on local or production environment
+// const string host = "140.146.23.39"; //Change depending on local or production environment
 
-// Add services to the container.
-builder.WebHost.UseUrls($"https://{host}:5001");
+// // Add services to the container.
+// builder.WebHost.UseUrls($"https://{host}:5001");
 
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+// builder.Services.AddControllers();
+// // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+// builder.Services.AddEndpointsApiExplorer();
+// builder.Services.AddSwaggerGen();
 
-var app = builder.Build();
+// var app = builder.Build();
 
-app.UseCors(
-    options => options.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()
-);
+// app.UseCors(
+//     options => options.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()
+// );
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+// // Configure the HTTP request pipeline.
+// if (app.Environment.IsDevelopment())
+// {
+//     app.UseSwagger();
+//     app.UseSwaggerUI();
+// }
+
+// app.UseHttpsRedirection();
+
+// app.UseAuthorization();
+
+// app.MapControllers();
+
+// app.Run();
+
+namespace KnowledgeBase
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    public class Program()
+    {
+        static void Main()
+        {
+            
+        }
+    }
 }
-
-app.UseHttpsRedirection();
-
-app.UseAuthorization();
-
-app.MapControllers();
-
-app.Run();

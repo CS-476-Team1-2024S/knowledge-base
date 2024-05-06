@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using System.Text;
 namespace KnowledgeBase
 {
@@ -26,18 +27,46 @@ namespace KnowledgeBase
         {
             this.Info.Delete(true);
         }
+        
+        // Format in json in Controller
+        public List<String> Scan()
+        {
+            DirectoryInfo directoryInfo = this.Info;
+            List<String> paths = [];
+
+            FileInfo[] files = directoryInfo.GetFiles("*", SearchOption.AllDirectories);
+            foreach (FileInfo fileInfo in files)
+            {
+                paths.Add(fileInfo.FullName);
+            }
+
+            // Get all directories in the directory and its subdirectories
+            DirectoryInfo[] directories = directoryInfo.GetDirectories("*", SearchOption.AllDirectories);
+            foreach (DirectoryInfo dir in directories)
+            {
+                paths.Add(dir.FullName);
+            }
+            List<string> relativePaths = [];
+            foreach (string path in paths)
+            {
+                string relativePath = path[(directoryInfo.FullName.Length - directoryInfo.Name.Length)..];
+                relativePaths.Add(relativePath.TrimStart(Path.DirectorySeparatorChar));
+            }
+
+            return relativePaths;
+        }
         public override string ToString()
         {
-            return Scan(this.Info);
+            return Print(this.Info);
         }
-        private static string Scan(DirectoryInfo root, int level = 0)
+        private static string Print(DirectoryInfo root, int level = 0)
         {
             StringBuilder builder = new();
 
             builder.AppendLine(string.Concat(Enumerable.Repeat("    ", level)) + "¬" + root.Name);
 
             foreach (var sub in root.EnumerateDirectories())
-                builder.Append(Scan(sub, level + 1));
+                builder.Append(Print(sub, level + 1));
             foreach (var file in root.EnumerateFiles())
                 builder.AppendLine(string.Concat(Enumerable.Repeat("    ", level + 1)) + "¬" + file.Name);
 

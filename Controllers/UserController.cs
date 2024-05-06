@@ -21,21 +21,25 @@ public class UserController : ControllerBase
             return "User info cannot be null.";
         }
 
-        var username = userInfo["userInfo"]?["username"]?.ToString();
-        var password = userInfo["userInfo"]?["password"]?.ToString();
-        var accessLevel = userInfo["userInfo"]?["accessLevel"]?.ToString();
-        int accessLevelInt;
-
-        if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password) || string.IsNullOrEmpty(accessLevel)){
-            return "Username, password, or access level cannot be null.";
-        }
-        else{
-            accessLevelInt = Int32.Parse(accessLevel);
+        string? username = userInfo["userInfo"]?["username"]?.ToString();
+        string? password = userInfo["userInfo"]?["password"]?.ToString();
+        if(!int.TryParse(userInfo["userInfo"]?["password"]?.ToString(), out int accessLevel))
+        {
+            accessLevel = -1;
         }
 
         try
         {
-            UserDB.AddUser(username, password, accessLevelInt);
+            User user = new(username,password, accessLevel);
+        }
+        catch(Exception e)
+        {
+            return e.Message;
+        }
+
+        try
+        {
+            UserDB.AddUser(username, password, accessLevel);
             UserDB.SaveToFile();
         }
         catch (Exception e)
@@ -49,34 +53,25 @@ public class UserController : ControllerBase
     [Route("Login")]
     public string Login([FromBody] JsonObject userInfo)
     {
-        bool verified;
 
         if(userInfo is null){
             return "User info cannot be null.";
         }
 
-        var username = userInfo["userInfo"]?["username"]?.ToString();
-        var password = userInfo["userInfo"]?["password"]?.ToString();
-
-        if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password)){
-            return "Username or password cannot be null.";
-        }
+        string? username = userInfo["userInfo"]?["username"]?.ToString();
+        string? password = userInfo["userInfo"]?["password"]?.ToString();
 
         try
         {
-            verified = UserDB.VerifyUser(username, password);
+            User user = new(username,password);
         }
-        catch (Exception e)
+        catch(Exception e)
         {
             return e.Message;
         }
+        string? token = UserDB.Login(username, password);
 
-        if (verified){
-            return "User logged in successfully.";
-        }
-        else{
-            return "Username or password is incorrect.";
-        }
+        return token ?? "Username/Password is incorrect";
     }
 
     [Route("Remove")]
@@ -86,21 +81,21 @@ public class UserController : ControllerBase
             return "User info cannot be null.";
         }
 
-        var username = userInfo["userInfo"]?["username"]?.ToString();
-        var password = userInfo["userInfo"]?["password"]?.ToString();
-        var accessLevel = userInfo["userInfo"]?["accessLevel"]?.ToString();
-        int accessLevelInt;
+        string? username = userInfo["userInfo"]?["username"]?.ToString();
+        string? password = userInfo["userInfo"]?["password"]?.ToString();
 
-        if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password) || string.IsNullOrEmpty(accessLevel) ){
-            return "Username, password, or access level cannot be null.";
+        try
+        {
+            User user = new(username,password);
         }
-        else{
-            accessLevelInt = Int32.Parse(accessLevel);
+        catch(Exception e)
+        {
+            return e.Message;
         }
 
         try
         {
-            UserDB.RemoveUser(username); //Update to include password and accessLevel
+            UserDB.RemoveUser(username);
         }
         catch (Exception e)
         {
