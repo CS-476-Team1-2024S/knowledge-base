@@ -1,5 +1,6 @@
 using System.Text.Json;
 using System.Text;
+using System.Text.Json.Nodes;
 namespace KnowledgeBase
 {
     public class Directory
@@ -81,13 +82,14 @@ namespace KnowledgeBase
             }
             return node;
         }
-        public string ToJSON()
+        public JsonObject ToJSON()
         {
             DirectoryNode root = BuildTree(this.Info);
 
             var options = new JsonSerializerOptions { WriteIndented = false };
             string json = JsonSerializer.Serialize(root, options);
-            return json;
+            JsonObject obj = JsonSerializer.Deserialize<JsonObject>(json);
+            return obj;
         }
         public override string ToString()
         {

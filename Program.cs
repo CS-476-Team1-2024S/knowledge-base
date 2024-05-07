@@ -38,7 +38,13 @@ namespace KnowledgeBase
         static void Main()
         {
             Directory dir = new Directory(Path.Combine(System.IO.Directory.GetCurrentDirectory(),"Root"));
-            File f = new File(dir.Info.FullName + "\\TESTFILE.txt");
+            // FileIndexer.IndexDirectory(dir);
+            // var paths = FileIndexer.SearchTFIDF("text");
+            // foreach (var path in paths)
+            // {
+            //     Console.WriteLine(path);
+            // }
+            dir.ToJSON();
         }
     }
 }

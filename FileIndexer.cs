@@ -9,14 +9,14 @@ namespace KnowledgeBase
         private static Dictionary<string, int> documentFrequency = [];
         private static Dictionary<string, int> totalWordsPerDocument = [];
         private static int totalDocuments;
-        public static void IndexDirectory(Directory root)
+        private static void IndexDirectory(Directory root)
         {
             foreach (var sub in root.Info.EnumerateDirectories())
                 IndexDirectory(new(sub.FullName));
             foreach (var file in root.Info.EnumerateFiles())
                 IndexFile(new(file.FullName));
         }
-        public static void IndexFile(File file)
+        private static void IndexFile(File file)
         {
             string content = file.Read();
             // Split file into words
@@ -46,8 +46,9 @@ namespace KnowledgeBase
             totalDocuments++;
         }
         // Term Frequency-Inverse Document Frequency
-        public static List<string> SearchTFIDF(string query)
+        public static List<string> SearchTFIDF(Directory root, string query)
         {
+            IndexDirectory(root);
             Dictionary<string, double> fileScores = [];
 
             string[] queryWords = query.ToLower().Split(new char[] { ' ', '\t', '\n' }, StringSplitOptions.RemoveEmptyEntries).Distinct().ToArray();

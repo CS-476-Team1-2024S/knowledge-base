@@ -42,14 +42,15 @@ public class SearchController : ControllerBase
 
         try
         {
-            index.IndexDirectory(root);
-            searchResults = index.SearchTFIDF(query);
+            // index.IndexDirectory(root);
+            // searchResults = index.SearchTFIDF(query);
         }
         catch(Exception e)
         {
             return e.Message;
         }
         
-        return string.Join(",", searchResults);
+        // return string.Join(",", searchResults);
+        return "";
     }
 }
