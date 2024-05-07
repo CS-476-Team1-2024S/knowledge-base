@@ -107,7 +107,7 @@ public class FileController : ControllerBase
         var path = fileInfo["fileInfo"]?["path"]?.ToString();
         var content = fileInfo["fileInfo"]?["content"]?.ToString();
         var append = fileInfo["fileInfo"]?["append"]?.ToString();
-        string? token = fileInfo["fileInfoInfo"]?["token"]?.ToString();
+        string? token = fileInfo["fileInfo"]?["token"]?.ToString();
 
         if (UserDB.VerifyToken(token) == null)
             return JsonResponse(false,"Invalid token.");

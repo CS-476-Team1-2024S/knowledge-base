@@ -50,7 +50,7 @@ namespace KnowledgeBase
         {
             if(string.IsNullOrWhiteSpace(query))
                 throw new ArgumentNullException(nameof(query), "Query cannot be null or whitespace.");
-            root ??= new Directory(Path.Combine(System.IO.Directory.GetCurrentDirectory(),"Root"));
+            root ??= new Directory(Path.Combine(System.IO.Directory.GetCurrentDirectory(),"root"));
             if(FileSystemEntity.ChangeCount > 0)
             {
                 IndexDirectory(root);

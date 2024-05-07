@@ -26,7 +26,7 @@ public class UserController : ControllerBase
 
         string? username = userInfo["userInfo"]?["username"]?.ToString();
         string? password = userInfo["userInfo"]?["password"]?.ToString();
-        if(!int.TryParse(userInfo["userInfo"]?["password"]?.ToString(), out int accessLevel))
+        if(!int.TryParse(userInfo["userInfo"]?["accessLevel"]?.ToString(), out int accessLevel))
         {
             accessLevel = -1;
         }
@@ -91,7 +91,7 @@ public class UserController : ControllerBase
         {
             return JsonResponse(false,e.Message);
         }
-        return JsonResponse(true,"Login successful.", new JsonObject{ ["Token"] = token });
+        return JsonResponse(true,"Logout successful.", new JsonObject{ ["Token"] = token });
     }
 
     [Route("Remove")]
