@@ -75,6 +75,24 @@ public class UserController : ControllerBase
             return JsonResponse(false,"Username/Password incorrect.");
         return JsonResponse(true,"Login successful.", new JsonObject{ ["Token"] = token });
     }
+    [Route("Logout")]
+    public JsonObject Logout([FromBody] JsonObject userInfo)
+    {
+        if(userInfo is null)
+            return JsonResponse(false,"User info cannot be null");
+
+        string? token = userInfo["userInfo"]?["token"]?.ToString();
+
+        try
+        {
+            UserDB.Logout(token);
+        }
+        catch (Exception e)
+        {
+            return JsonResponse(false,e.Message);
+        }
+        return JsonResponse(true,"Login successful.", new JsonObject{ ["Token"] = token });
+    }
 
     [Route("Remove")]
     public JsonObject Remove([FromBody] JsonObject userInfo)

@@ -7,14 +7,18 @@ namespace KnowledgeBase
         private static readonly File file = new("Users.db");
         private static Dictionary<string, User> usernamePassword = [];
         private static Dictionary<string, User> tokenUsername = [];
-        public static void AddUser(string username, string password, int accessLevel)
+        public static void AddUser(string? username, string? password, int accessLevel)
         {
+            if(string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
+                throw new ArgumentNullException(nameof(username), "Username/Password cannot be null.");
             if (usernamePassword.ContainsKey(username))
                 throw new ArgumentException("Username already exists.");
             usernamePassword[username] = new(username,password,accessLevel);
         }
-        public static bool RemoveUser(string username)
+        public static bool RemoveUser(string? username)
         {
+            if(string.IsNullOrWhiteSpace(username))
+                throw new ArgumentNullException(nameof(username), "Username cannot be null.");
             return usernamePassword.Remove(username);
         }
         public static User? GetUser(string username)
@@ -22,8 +26,10 @@ namespace KnowledgeBase
             usernamePassword.TryGetValue(username, out User? value);
             return value;
         }
-        public static string? Login(string username, string password)
+        public static string? Login(string? username, string? password)
         {
+            if(string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
+                throw new ArgumentNullException(nameof(username), "Username/Password cannot be null.");
             if (usernamePassword.TryGetValue(username, out User? value))
             {
                 if(value.Password == password) // Password comparison; use hashed comparison in real scenarios.
@@ -35,8 +41,9 @@ namespace KnowledgeBase
             }
             return null;
         }
-        public static void Logout(string token)
+        public static void Logout(string? token)
         {
+            token ??= "";
             tokenUsername.TryGetValue(token, out User? value);
             if(value == null)
                 throw new ArgumentException("Invalid Token");

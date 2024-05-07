@@ -46,7 +46,7 @@ namespace KnowledgeBase
             totalDocuments++;
         }
         // Term Frequency-Inverse Document Frequency
-        public static List<string> SearchTFIDF(string query, Directory? root = null)
+        public static List<string> SearchTFIDF(string? query, Directory? root = null)
         {
             if(string.IsNullOrWhiteSpace(query))
                 throw new ArgumentNullException(nameof(query), "Query cannot be null or whitespace.");
