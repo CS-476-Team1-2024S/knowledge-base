@@ -29,7 +29,7 @@ public class FileController : ControllerBase
             return JsonResponse(false, "File info cannot be null.");
         
         var path = fileInfo["fileInfo"]?["path"]?.ToString();
-        string? token = fileInfo["directoryInfo"]?["token"]?.ToString();
+        string? token = fileInfo["fileInfo"]?["token"]?.ToString();
 
         if (UserDB.VerifyToken(token) == null)
             return JsonResponse(false,"Invalid token.");
@@ -54,7 +54,7 @@ public class FileController : ControllerBase
 
         var sourcePath = fileInfo["fileInfo"]?["source"]?.ToString();
         var destPath = fileInfo["fileInfo"]?["destination"]?.ToString();
-        string? token = fileInfo["directoryInfo"]?["token"]?.ToString();
+        string? token = fileInfo["fileInfo"]?["token"]?.ToString();
 
         if (UserDB.VerifyToken(token) == null)
             return JsonResponse(false,"Invalid token.");
@@ -80,7 +80,7 @@ public class FileController : ControllerBase
             return JsonResponse(false, "File info cannot be null.");
 
         var path = fileInfo["fileInfo"]?["path"]?.ToString();
-        string? token = fileInfo["directoryInfo"]?["token"]?.ToString();
+        string? token = fileInfo["fileInfo"]?["token"]?.ToString();
 
         if (UserDB.VerifyToken(token) == null)
             return JsonResponse(false,"Invalid token.");
@@ -107,7 +107,7 @@ public class FileController : ControllerBase
         var path = fileInfo["fileInfo"]?["path"]?.ToString();
         var content = fileInfo["fileInfo"]?["content"]?.ToString();
         var append = fileInfo["fileInfo"]?["append"]?.ToString();
-        string? token = fileInfo["directoryInfo"]?["token"]?.ToString();
+        string? token = fileInfo["fileInfoInfo"]?["token"]?.ToString();
 
         if (UserDB.VerifyToken(token) == null)
             return JsonResponse(false,"Invalid token.");

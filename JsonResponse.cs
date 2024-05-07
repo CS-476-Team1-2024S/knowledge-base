@@ -11,7 +11,7 @@ namespace KnowledgeBase
             {
                 ["Success"] = success,
                 ["Content"] = content,
-                ["Data"] = data
+                ["Data"] = data.DeepClone()
             };
         }
     }
