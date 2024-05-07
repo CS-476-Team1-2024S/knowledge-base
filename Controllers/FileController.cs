@@ -147,6 +147,6 @@ public class FileController : ControllerBase
             return JsonResponse(false,e.Message);
         }
 
-        return JsonResponse(false,"", new JsonObject { ["FileContent"] = content});
+        return JsonResponse(true,"File read from.", new JsonObject { ["FileContent"] = content});
     }
 }
