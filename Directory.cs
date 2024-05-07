@@ -3,7 +3,7 @@ using System.Text;
 using System.Text.Json.Nodes;
 namespace KnowledgeBase
 {
-    public class Directory
+    public class Directory : FileSystemEntity
     {
         public DirectoryInfo Info { get; set; }
         public Directory(string? path)
@@ -22,53 +22,26 @@ namespace KnowledgeBase
             if (System.IO.Directory.Exists(path))
                 throw new ArgumentException($"{path} already exists.");
             System.IO.Directory.CreateDirectory(path);
+
+            IncrementChangeCount();
+
             return new Directory(path);
         }
         public void Move(Directory dest)
         {
             this.Info.MoveTo(Path.Combine(dest.Info.FullName, this.Info.Name));
+
+            IncrementChangeCount();
         }
         public void Delete()
         {
+            if(this.Info.Name == "Root")
+                throw new ArgumentException("Cannot delete Root directory.");
             this.Info.Delete(true);
+
+            IncrementChangeCount();
         }
         
-        // // Returns tuple of type List<String> of all directory and file paths
-        // public (List<String>,List<String>) Scan(bool relative = false)
-        // {
-        //     DirectoryInfo directoryInfo = this.Info;
-        //     List<String> directories = [];
-        //     List<String> files = [];
-
-        //     FileInfo[] fileInfos = directoryInfo.GetFiles("*", SearchOption.AllDirectories);
-        //     foreach(FileInfo fileInfo in fileInfos )
-        //     {
-        //         files.Add(fileInfo.FullName);
-        //     }
-
-        //     DirectoryInfo[] directoryInfos = directoryInfo.GetDirectories("*", SearchOption.AllDirectories);
-        //     foreach (DirectoryInfo dir in directoryInfos)
-        //     {
-        //         directories.Add(dir.FullName);
-        //     }
-        //     if(!relative)
-        //         return (directories, files);
-
-        //     // Get relative paths to the root
-        //     List<string> relativeDirectories = [];
-        //     List<string> relativeFiles = [];
-        //     foreach (string path in directories)
-        //     {
-        //         string relativePath = path[(directoryInfo.FullName.Length - directoryInfo.Name.Length)..];
-        //         relativeDirectories.Add(relativePath.TrimStart(Path.DirectorySeparatorChar));
-        //     }
-        //     foreach (string path in files)
-        //     {
-        //         string relativePath = path[(directoryInfo.FullName.Length - directoryInfo.Name.Length)..];
-        //         relativeFiles.Add(relativePath.TrimStart(Path.DirectorySeparatorChar));
-        //     }
-        //     return (relativeDirectories, relativeFiles);
-        // }
         public static DirectoryNode BuildTree(DirectoryInfo directoryInfo)
         {
             var node = new DirectoryNode(directoryInfo.Name);

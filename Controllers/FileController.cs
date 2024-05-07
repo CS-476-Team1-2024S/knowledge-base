@@ -8,6 +8,7 @@ namespace KnowledgeBase.Controllers;
 [Produces("application/json")]
 public class FileController : ControllerBase
 {
+    static JsonObject JsonResponse(bool success, string message, JsonObject? data = null) => JResponse.Create(success, message, data);
     private Directory root;
 
     public FileController()
@@ -22,34 +23,41 @@ public class FileController : ControllerBase
     }
 
     [Route("Create")]
-    public string Create([FromBody] JsonObject fileInfo)
+    public JsonObject Create([FromBody] JsonObject fileInfo)
     {
-        if(fileInfo is null){
-            return "File info cannot be null.";
-        }
-
+        if(fileInfo is null)
+            return JsonResponse(false, "File info cannot be null.");
+        
         var path = fileInfo["fileInfo"]?["path"]?.ToString();
+        string? token = fileInfo["directoryInfo"]?["token"]?.ToString();
+
+        if (UserDB.VerifyToken(token) == null)
+            return JsonResponse(false,"Invalid token.");
+        
         try
         {
             File newFile = KnowledgeBase.File.Create(Path.Combine(System.IO.Directory.GetCurrentDirectory(), path));
         }
         catch(Exception e)
         {
-            return e.Message;
+            return JsonResponse(false,e.Message);
         }
         
-        return "File created successfully.";
+        return JsonResponse(true,"File created.");
     }
 
     [Route("Move")]
-    public string Move([FromBody] JsonObject fileInfo)
+    public JsonObject Move([FromBody] JsonObject fileInfo)
     {
-        if(fileInfo is null){
-            return "File info cannot be null.";
-        }
+        if(fileInfo is null)
+            return JsonResponse(false, "File info cannot be null.");
 
         var sourcePath = fileInfo["fileInfo"]?["source"]?.ToString();
         var destPath = fileInfo["fileInfo"]?["destination"]?.ToString();
+        string? token = fileInfo["directoryInfo"]?["token"]?.ToString();
+
+        if (UserDB.VerifyToken(token) == null)
+            return JsonResponse(false,"Invalid token.");
 
         try
         {
@@ -59,20 +67,23 @@ public class FileController : ControllerBase
         }
         catch (Exception e)
         {
-            return e.Message;
+            return JsonResponse(false,e.Message);
         }
 
-        return "File moved successfully.";
+        return JsonResponse(true,"File moved.");
     }
 
     [Route("Delete")]
-    public string Delete([FromBody] JsonObject fileInfo)
+    public JsonObject Delete([FromBody] JsonObject fileInfo)
     {
-        if(fileInfo is null){
-            return "File info cannot be null.";
-        }
+        if(fileInfo is null)
+            return JsonResponse(false, "File info cannot be null.");
 
         var path = fileInfo["fileInfo"]?["path"]?.ToString();
+        string? token = fileInfo["directoryInfo"]?["token"]?.ToString();
+
+        if (UserDB.VerifyToken(token) == null)
+            return JsonResponse(false,"Invalid token.");
         
         try
         {
@@ -81,26 +92,28 @@ public class FileController : ControllerBase
         }
         catch (Exception e)
         {
-            return e.Message;
+            return JsonResponse(false,e.Message);
         }
 
-        return "File deleted successfully.";
+        return JsonResponse(true,"File deleted.");
     }
 
     [Route("Write")]
-    public string Write([FromBody] JsonObject fileInfo)
+    public JsonObject Write([FromBody] JsonObject fileInfo)
     {
-        if(fileInfo is null){
-            return "File info cannot be null.";
-        }
+        if(fileInfo is null)
+            return JsonResponse(false, "File info cannot be null.");
 
         var path = fileInfo["fileInfo"]?["path"]?.ToString();
         var content = fileInfo["fileInfo"]?["content"]?.ToString();
         var append = fileInfo["fileInfo"]?["append"]?.ToString();
+        string? token = fileInfo["directoryInfo"]?["token"]?.ToString();
+
+        if (UserDB.VerifyToken(token) == null)
+            return JsonResponse(false,"Invalid token.");
+
         if(!bool.TryParse(append, out bool appendBool))
-        {
-            return "Append is an improper value";
-        }
+            return JsonResponse(false,"Append is an improper value");
 
         try
         {
@@ -109,18 +122,17 @@ public class FileController : ControllerBase
         }
         catch (Exception e)
         {
-            return e.Message;
+            return JsonResponse(false,e.Message);
         }
 
-        return "File written successfully.";
+        return JsonResponse(true,"File written to.");
     }
 
     [Route("Read")]
-    public string Read([FromBody] JsonObject fileInfo)
+    public JsonObject Read([FromBody] JsonObject fileInfo)
     {
-        if(fileInfo is null){
-            return "File info cannot be null.";
-        }
+        if(fileInfo is null)
+            return JsonResponse(false, "File info cannot be null.");
 
         var path = fileInfo["fileInfo"]?["path"]?.ToString();
         string content;
@@ -132,9 +144,9 @@ public class FileController : ControllerBase
         }
         catch (Exception e)
         {
-            return e.Message;
+            return JsonResponse(false,e.Message);
         }
 
-        return content;
+        return JsonResponse(false,"", new JsonObject { ["FileContent"] = content});
     }
 }

@@ -8,18 +8,21 @@ namespace KnowledgeBase.Controllers;
 [Produces("application/json")]
 public class UserController : ControllerBase
 {
-
+    static JsonObject JsonResponse(bool success, string message, JsonObject? data = null) => JResponse.Create(success, message, data);
     public UserController()
     {
         UserDB.LoadFromFile();
     }
+    ~UserController()
+    {
+        UserDB.SaveToFile();
+    }
 
     [Route("Add")]
-    public string Add([FromBody] JsonObject userInfo)
+    public JsonObject Add([FromBody] JsonObject userInfo)
     {
-        if(userInfo is null){
-            return "User info cannot be null.";
-        }
+        if(userInfo is null)
+            return JsonResponse(false,"User info cannot be null");
 
         string? username = userInfo["userInfo"]?["username"]?.ToString();
         string? password = userInfo["userInfo"]?["password"]?.ToString();
@@ -27,36 +30,33 @@ public class UserController : ControllerBase
         {
             accessLevel = -1;
         }
-
         try
         {
             User user = new(username,password, accessLevel);
         }
         catch(Exception e)
         {
-            return e.Message;
+            return JsonResponse(false,e.Message);
         }
 
         try
         {
             UserDB.AddUser(username, password, accessLevel);
-            UserDB.SaveToFile();
         }
         catch (Exception e)
         {
-            return e.Message;
+            return JsonResponse(false,e.Message);
         }
 
-        return "User added successfully.";
+        return JsonResponse(true,"User added.");
     }
 
     [Route("Login")]
-    public string Login([FromBody] JsonObject userInfo)
+    public JsonObject Login([FromBody] JsonObject userInfo)
     {
 
-        if(userInfo is null){
-            return "User info cannot be null.";
-        }
+        if(userInfo is null)
+            return JsonResponse(false,"User info cannot be null");
 
         string? username = userInfo["userInfo"]?["username"]?.ToString();
         string? password = userInfo["userInfo"]?["password"]?.ToString();
@@ -67,19 +67,20 @@ public class UserController : ControllerBase
         }
         catch(Exception e)
         {
-            return e.Message;
+            return JsonResponse(false,e.Message);
         }
         string? token = UserDB.Login(username, password);
 
-        return token ?? "Username/Password is incorrect";
+        if(token == null)
+            return JsonResponse(false,"Username/Password incorrect.");
+        return JsonResponse(true,"Login successful.", new JsonObject{ ["Token"] = token });
     }
 
     [Route("Remove")]
-    public string Remove([FromBody] JsonObject userInfo)
+    public JsonObject Remove([FromBody] JsonObject userInfo)
     {
-        if(userInfo is null){
-            return "User info cannot be null.";
-        }
+        if(userInfo is null)
+            return JsonResponse(false,"User info cannot be null");
 
         string? username = userInfo["userInfo"]?["username"]?.ToString();
         string? password = userInfo["userInfo"]?["password"]?.ToString();
@@ -90,7 +91,7 @@ public class UserController : ControllerBase
         }
         catch(Exception e)
         {
-            return e.Message;
+            return JsonResponse(false,e.Message);
         }
 
         try
@@ -99,9 +100,9 @@ public class UserController : ControllerBase
         }
         catch (Exception e)
         {
-            return e.Message;
+            return JsonResponse(false,e.Message);
         }
         
-        return "User was removed successfully.";
+        return JsonResponse(true,"User removed.");
     }
-}
+}// Add messages where appropriate

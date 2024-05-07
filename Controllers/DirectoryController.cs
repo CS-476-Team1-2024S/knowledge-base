@@ -1,14 +1,17 @@
 using System.Text.Json.Nodes;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.VisualStudio.TestPlatform.ObjectModel;
+using Microsoft.EntityFrameworkCore.Storage.Json;
 
 namespace KnowledgeBase.Controllers;
 
 [ApiController]
 [Route("Directory")]
 [Produces("application/json")]
+
 public class DirectoryController : ControllerBase
 {
+    static JsonObject JsonResponse(bool success, string message, JsonObject? data = null) => JResponse.Create(success, message, data);
+
     private Directory root;
 
     public DirectoryController()
@@ -23,13 +26,16 @@ public class DirectoryController : ControllerBase
     }
 
     [Route("Create")]
-    public string Create([FromBody] JsonObject directoryInfo)
+    public JsonObject Create([FromBody] JsonObject directoryInfo)
     {
-        if(directoryInfo is null){
-            return "Directory info cannot be null.";
-        }
+        if(directoryInfo is null)
+            return JsonResponse(false,"Directory Info cannot be null.");
 
         string? path = directoryInfo["directoryInfo"]?["path"]?.ToString();
+        string? token = directoryInfo["directoryInfo"]?["token"]?.ToString();
+
+        if (UserDB.VerifyToken(token) == null)
+            return JsonResponse(false,"Invalid token.");
 
         try
         {
@@ -37,21 +43,25 @@ public class DirectoryController : ControllerBase
         }
         catch (Exception e)
         {
-            return e.Message;
+            return JsonResponse(false,e.Message);
         }
 
-        return "Directory created successfully.";
+        return JsonResponse(true,"Directory created.");
     }
 
     [Route("Move")]
-    public string Move([FromBody] JsonObject directoryInfo)
+    public JsonObject Move([FromBody] JsonObject directoryInfo)
     {
-        if(directoryInfo is null){
-            return "Directory info cannot be null.";
-        }
+        if(directoryInfo is null)
+            return JsonResponse(false,"Directory Info cannot be null.");
+        
 
         var sourcePath = directoryInfo["directoryInfo"]?["source"]?.ToString();
         var destPath = directoryInfo["directoryInfo"]?["destination"]?.ToString();
+        string? token = directoryInfo["directoryInfo"]?["token"]?.ToString();
+
+        if (UserDB.VerifyToken(token) == null)
+            return JsonResponse(false,"Invalid token.");
 
         try
         {
@@ -61,20 +71,23 @@ public class DirectoryController : ControllerBase
         }
         catch (Exception e)
         {
-            return e.Message;
+             return JsonResponse(false,e.Message);
         }
 
-        return "Directory moved successfully.";
+        return JsonResponse(true,"Directory moved.");
     }
 
     [Route("Delete")]
-    public string Delete([FromBody] JsonObject directoryInfo)
+    public JsonObject Delete([FromBody] JsonObject directoryInfo)
     {
-        if(directoryInfo is null){
-            return "Directory info cannot be null.";
-        }
+        if(directoryInfo is null)
+            return JsonResponse(false,"Directory Info cannot be null.");
 
         var path = directoryInfo["directoryInfo"]?["path"]?.ToString();
+        string? token = directoryInfo["directoryInfo"]?["token"]?.ToString();
+
+        if (UserDB.VerifyToken(token) == null)
+            return JsonResponse(false,"Invalid token.");
         
         try
         {
@@ -83,29 +96,28 @@ public class DirectoryController : ControllerBase
         }
         catch (Exception e)
         {
-            return e.Message;
+            return JsonResponse(false,e.Message);
         }
 
-        return "Directory deleted successfully.";
+        return JsonResponse(true,"Directory deleted.");
     }
 
     [Route("Scan")]
-    public string Scan([FromBody] JsonObject directoryInfo)
+    public JsonObject Scan([FromBody] JsonObject directoryInfo)
     {
-        if(directoryInfo is null){
-            return "Directory info cannot be null.";
-        }
+        if(directoryInfo is null)
+            return JsonResponse(false,"Directory Info cannot be null.");
 
         var path = directoryInfo["directoryInfo"]?["path"]?.ToString();
         
         try
         {
             Directory source = new(Path.Combine(System.IO.Directory.GetCurrentDirectory(), path));
-            return source.ToJSON();
+            return JsonResponse(true,"Scan complete.",source.ToJSON());
         }
         catch (Exception e)
         {
-            return e.Message;
+            return JsonResponse(false,e.Message);
         }
     }
 }

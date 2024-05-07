@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 
 namespace KnowledgeBase
 {
-    class FileIndexer
+    class Indexer
     {
         private static Dictionary<string, Dictionary<string, int>> wordCounts = [];
         private static Dictionary<string, int> documentFrequency = [];
@@ -46,9 +46,16 @@ namespace KnowledgeBase
             totalDocuments++;
         }
         // Term Frequency-Inverse Document Frequency
-        public static List<string> SearchTFIDF(Directory root, string query)
+        public static List<string> SearchTFIDF(string query, Directory? root = null)
         {
-            IndexDirectory(root);
+            if(string.IsNullOrWhiteSpace(query))
+                throw new ArgumentNullException(nameof(query), "Query cannot be null or whitespace.");
+            root ??= new Directory(Path.Combine(System.IO.Directory.GetCurrentDirectory(),"Root"));
+            if(FileSystemEntity.ChangeCount > 0)
+            {
+                IndexDirectory(root);
+                FileSystemEntity.ResetChangeCount();
+            }
             Dictionary<string, double> fileScores = [];
 
             string[] queryWords = query.ToLower().Split(new char[] { ' ', '\t', '\n' }, StringSplitOptions.RemoveEmptyEntries).Distinct().ToArray();
@@ -73,7 +80,14 @@ namespace KnowledgeBase
                 }
             }
             var rankedFiles = fileScores.OrderByDescending(pair => pair.Value).Select(pair => pair.Key).ToList(); // Rank documents by score
-            return rankedFiles;
+            // Get relative paths to the root
+            List<string> relativeFiles = [];
+            foreach (string path in rankedFiles)
+            {
+                string relativePath = path[(root.Info.FullName.Length - root.Info.Name.Length)..];
+                relativeFiles.Add(relativePath.TrimStart(Path.DirectorySeparatorChar));
+            }
+            return relativeFiles;
         }
     }
 }

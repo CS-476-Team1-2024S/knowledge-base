@@ -1,7 +1,7 @@
 using System.Text;
 namespace KnowledgeBase
 {
-    public class File
+    public class File : FileSystemEntity
     {
         public FileInfo Info { get; set; }
         public File(string path)
@@ -22,15 +22,22 @@ namespace KnowledgeBase
             if(System.IO.File.Exists(path))
                 throw new ArgumentException($"{path} already exists.");
             System.IO.File.Create(path).Close();
+
+            IncrementChangeCount();
+
             return new File(path);
         }
         public void Move(Directory dest)
         {
             this.Info.MoveTo(Path.Combine(dest.Info.FullName, this.Info.Name));
+
+            IncrementChangeCount();
         }
         public void Delete()
         {
             this.Info.Delete();
+
+            IncrementChangeCount();
         }
         public void Write(string content, bool append = false)
         {
@@ -40,6 +47,8 @@ namespace KnowledgeBase
             FileMode fm = append ? FileMode.Append : FileMode.Create;
             using FileStream fs = new(this.Info.FullName, fm);
             fs.Write(bytes);
+
+            IncrementChangeCount();
         }
         public string Read()
         {

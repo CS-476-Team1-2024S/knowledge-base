@@ -42,8 +42,10 @@ namespace KnowledgeBase
                 throw new ArgumentException("Invalid Token");
             tokenUsername.Remove(token);
         }
-        public static string? VerifyToken(string token)
+        public static string? VerifyToken(string? token)
         {
+            if(token == null)
+                return null;
             if (tokenUsername.TryGetValue(token, out User? value))
             {
                 return value.Username;

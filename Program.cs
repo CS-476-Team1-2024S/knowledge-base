@@ -31,20 +31,30 @@
 
 // app.Run();
 
+using System.Text.Json.Nodes;
+
 namespace KnowledgeBase
 {
     public class Program()
     {
         static void Main()
         {
-            Directory dir = new Directory(Path.Combine(System.IO.Directory.GetCurrentDirectory(),"Root"));
-            // FileIndexer.IndexDirectory(dir);
-            // var paths = FileIndexer.SearchTFIDF("text");
-            // foreach (var path in paths)
-            // {
-            //     Console.WriteLine(path);
-            // }
-            dir.ToJSON();
+            Directory dir = new(Path.Combine(System.IO.Directory.GetCurrentDirectory(),"Root"));
+            var paths = Indexer.SearchTFIDF("text");
+
+            var jsonArray = new JsonArray();
+            foreach (var path in paths)
+            {
+                jsonArray.Add(path);
+            }
+            var response = JResponse.Create(true, "Search complete.",new JsonObject{["FilePaths"] = jsonArray});
+
+            Console.WriteLine(response);
+
+            Directory source = new(Path.Combine(System.IO.Directory.GetCurrentDirectory(), "Root"));
+            response = JResponse.Create(true,"Scan complete.",source.ToJSON());
+
+            Console.WriteLine(response);
         }
     }
 }
