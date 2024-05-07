@@ -42,6 +42,7 @@ public class UserController : ControllerBase
         try
         {
             UserDB.AddUser(username, password, accessLevel);
+            UserDB.SaveToFile();
         }
         catch (Exception e)
         {
