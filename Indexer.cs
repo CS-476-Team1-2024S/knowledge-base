@@ -3,22 +3,23 @@ using System.Text.RegularExpressions;
 
 namespace KnowledgeBase
 {
-    class FileIndexer
+    class Indexer
     {
-        private Dictionary<string, Dictionary<string, int>> wordCounts = [];
-        private Dictionary<string, int> documentFrequency = [];
-        private Dictionary<string, int> totalWordsPerDocument = [];
-        private int totalDocuments;
-        public void IndexDirectory(Directory root)
+        private static Dictionary<string, Dictionary<string, int>> wordCounts = [];
+        private static Dictionary<string, int> documentFrequency = [];
+        private static Dictionary<string, int> totalWordsPerDocument = [];
+        private static int totalDocuments;
+        private static void IndexDirectory(Directory root)
         {
             foreach (var sub in root.Info.EnumerateDirectories())
                 IndexDirectory(new(sub.FullName));
             foreach (var file in root.Info.EnumerateFiles())
                 IndexFile(new(file.FullName));
         }
-        public void IndexFile(File file)
+        private static void IndexFile(File file)
         {
             string content = file.Read();
+            // Split file into words
             string[] words = Regex.Split(content.ToLower(), @"\W+");
 
             foreach (string word in words)
@@ -45,8 +46,16 @@ namespace KnowledgeBase
             totalDocuments++;
         }
         // Term Frequency-Inverse Document Frequency
-        public List<string> SearchTFIDF(string query)
+        public static List<string> SearchTFIDF(string? query, Directory? root = null)
         {
+            if(string.IsNullOrWhiteSpace(query))
+                throw new ArgumentNullException(nameof(query), "Query cannot be null or whitespace.");
+            root ??= new Directory(Path.Combine(System.IO.Directory.GetCurrentDirectory(),"root"));
+            if(FileSystemEntity.ChangeCount > 0)
+            {
+                IndexDirectory(root);
+                FileSystemEntity.ResetChangeCount();
+            }
             Dictionary<string, double> fileScores = [];
 
             string[] queryWords = query.ToLower().Split(new char[] { ' ', '\t', '\n' }, StringSplitOptions.RemoveEmptyEntries).Distinct().ToArray();
@@ -71,7 +80,14 @@ namespace KnowledgeBase
                 }
             }
             var rankedFiles = fileScores.OrderByDescending(pair => pair.Value).Select(pair => pair.Key).ToList(); // Rank documents by score
-            return rankedFiles;
+            // Get relative paths to the root
+            List<string> relativeFiles = [];
+            foreach (string path in rankedFiles)
+            {
+                string relativePath = path[(root.Info.FullName.Length - root.Info.Name.Length)..];
+                relativeFiles.Add(relativePath.TrimStart(Path.DirectorySeparatorChar));
+            }
+            return relativeFiles;
         }
     }
 }

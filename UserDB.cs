@@ -5,34 +5,64 @@ namespace KnowledgeBase
     public static class UserDB
     {
         private static readonly File file = new("Users.db");
-        private static Dictionary<string, User> db = [];
-        public static void AddUser(string username, string password, int accessLevel)
+        private static Dictionary<string, User> usernamePassword = [];
+        private static Dictionary<string, User> tokenUsername = [];
+        public static void AddUser(string? username, string? password, int accessLevel)
         {
-            if (db.ContainsKey(username))
-                throw new ArgumentException("User already exists");
-            db[username] = new(username,password,accessLevel);
+            if(string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
+                throw new ArgumentNullException(nameof(username), "Username/Password cannot be null.");
+            if (usernamePassword.ContainsKey(username))
+                throw new ArgumentException("Username already exists.");
+            usernamePassword[username] = new(username,password,accessLevel);
         }
-        public static void RemoveUser(string username)
+        public static bool RemoveUser(string? username)
         {
-            db.Remove(username);
+            if(string.IsNullOrWhiteSpace(username))
+                throw new ArgumentNullException(nameof(username), "Username cannot be null.");
+            return usernamePassword.Remove(username);
         }
         public static User? GetUser(string username)
         {
-            db.TryGetValue(username, out User? value);
+            usernamePassword.TryGetValue(username, out User? value);
             return value;
         }
-        public static bool VerifyUser(string username, string password)
+        public static string? Login(string? username, string? password)
         {
-            if (db.TryGetValue(username, out User? value))
+            if(string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
+                throw new ArgumentNullException(nameof(username), "Username/Password cannot be null.");
+            if (usernamePassword.TryGetValue(username, out User? value))
             {
-                return value.Password == password; // Password comparison; use hashed comparison in real scenarios.
+                if(value.Password == password) // Password comparison; use hashed comparison in real scenarios.
+                {
+                    string token = Utilities.GenerateUUID();
+                    tokenUsername[token] = value;
+                    return token;
+                }
             }
-            return false;
+            return null;
+        }
+        public static void Logout(string? token)
+        {
+            token ??= "";
+            tokenUsername.TryGetValue(token, out User? value);
+            if(value == null)
+                throw new ArgumentException("Invalid Token");
+            tokenUsername.Remove(token);
+        }
+        public static string? VerifyToken(string? token)
+        {
+            if(token == null)
+                return null;
+            if (tokenUsername.TryGetValue(token, out User? value))
+            {
+                return value.Username;
+            }
+            return null;
         }
         public static void SaveToFile()
         {
             var options = new JsonSerializerOptions { WriteIndented = true };
-            string json = JsonSerializer.Serialize(db, options);
+            string json = JsonSerializer.Serialize(usernamePassword, options);
             file.Write(json);
         }
         public static void LoadFromFile()
@@ -45,7 +75,7 @@ namespace KnowledgeBase
                     var deserializedDb = JsonSerializer.Deserialize<Dictionary<string, User>>(json);
                     if (deserializedDb != null)
                     {
-                        db = deserializedDb;
+                        usernamePassword = deserializedDb;
                     }
                 }
                 catch (Exception e) {

@@ -8,105 +8,120 @@ namespace KnowledgeBase.Controllers;
 [Produces("application/json")]
 public class UserController : ControllerBase
 {
-
+    static JsonObject JsonResponse(bool success, string message, JsonObject? data = null) => JResponse.Create(success, message, data);
     public UserController()
     {
         UserDB.LoadFromFile();
     }
+    ~UserController()
+    {
+        UserDB.SaveToFile();
+    }
 
     [Route("Add")]
-    public string Add([FromBody] JsonObject userInfo)
+    public JsonObject Add([FromBody] JsonObject userInfo)
     {
-        if(userInfo is null){
-            return "User info cannot be null.";
-        }
+        if(userInfo is null)
+            return JsonResponse(false,"User info cannot be null");
 
-        var username = userInfo["userInfo"]?["username"]?.ToString();
-        var password = userInfo["userInfo"]?["password"]?.ToString();
-        var accessLevel = userInfo["userInfo"]?["accessLevel"]?.ToString();
-        int accessLevelInt;
-
-        if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password) || string.IsNullOrEmpty(accessLevel)){
-            return "Username, password, or access level cannot be null.";
+        string? username = userInfo["userInfo"]?["username"]?.ToString();
+        string? password = userInfo["userInfo"]?["password"]?.ToString();
+        if(!int.TryParse(userInfo["userInfo"]?["accessLevel"]?.ToString(), out int accessLevel))
+        {
+            accessLevel = -1;
         }
-        else{
-            accessLevelInt = Int32.Parse(accessLevel);
+        try
+        {
+            User user = new(username,password, accessLevel);
+        }
+        catch(Exception e)
+        {
+            return JsonResponse(false,e.Message);
         }
 
         try
         {
-            UserDB.AddUser(username, password, accessLevelInt);
+            UserDB.AddUser(username, password, accessLevel);
             UserDB.SaveToFile();
         }
         catch (Exception e)
         {
-            return e.Message;
+            return JsonResponse(false,e.Message);
         }
 
-        return "User added successfully.";
+        return JsonResponse(true,"User added.");
     }
 
     [Route("Login")]
-    public string Login([FromBody] JsonObject userInfo)
+    public JsonObject Login([FromBody] JsonObject userInfo)
     {
-        bool verified;
 
-        if(userInfo is null){
-            return "User info cannot be null.";
-        }
+        if(userInfo is null)
+            return JsonResponse(false,"User info cannot be null");
 
-        var username = userInfo["userInfo"]?["username"]?.ToString();
-        var password = userInfo["userInfo"]?["password"]?.ToString();
-
-        if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password)){
-            return "Username or password cannot be null.";
-        }
+        string? username = userInfo["userInfo"]?["username"]?.ToString();
+        string? password = userInfo["userInfo"]?["password"]?.ToString();
 
         try
         {
-            verified = UserDB.VerifyUser(username, password);
+            User user = new(username,password);
+        }
+        catch(Exception e)
+        {
+            return JsonResponse(false,e.Message);
+        }
+        string? token = UserDB.Login(username, password);
+
+        if(token == null)
+            return JsonResponse(false,"Username/Password incorrect.");
+        return JsonResponse(true,"Login successful.", new JsonObject{ ["Token"] = token });
+    }
+    [Route("Logout")]
+    public JsonObject Logout([FromBody] JsonObject userInfo)
+    {
+        if(userInfo is null)
+            return JsonResponse(false,"User info cannot be null");
+
+        string? token = userInfo["userInfo"]?["token"]?.ToString();
+
+        try
+        {
+            UserDB.Logout(token);
         }
         catch (Exception e)
         {
-            return e.Message;
+            return JsonResponse(false,e.Message);
         }
-
-        if (verified){
-            return "User logged in successfully.";
-        }
-        else{
-            return "Username or password is incorrect.";
-        }
+        return JsonResponse(true,"Logout successful.", new JsonObject{ ["Token"] = token });
     }
 
     [Route("Remove")]
-    public string Remove([FromBody] JsonObject userInfo)
+    public JsonObject Remove([FromBody] JsonObject userInfo)
     {
-        if(userInfo is null){
-            return "User info cannot be null.";
-        }
+        if(userInfo is null)
+            return JsonResponse(false,"User info cannot be null");
 
-        var username = userInfo["userInfo"]?["username"]?.ToString();
-        var password = userInfo["userInfo"]?["password"]?.ToString();
-        var accessLevel = userInfo["userInfo"]?["accessLevel"]?.ToString();
-        int accessLevelInt;
+        string? username = userInfo["userInfo"]?["username"]?.ToString();
+        string? password = userInfo["userInfo"]?["password"]?.ToString();
 
-        if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password) || string.IsNullOrEmpty(accessLevel) ){
-            return "Username, password, or access level cannot be null.";
+        try
+        {
+            User user = new(username,password);
         }
-        else{
-            accessLevelInt = Int32.Parse(accessLevel);
+        catch(Exception e)
+        {
+            return JsonResponse(false,e.Message);
         }
 
         try
         {
-            UserDB.RemoveUser(username); //Update to include password and accessLevel
+            UserDB.RemoveUser(username);
         }
         catch (Exception e)
         {
-            return e.Message;
+            return JsonResponse(false,e.Message);
         }
         
-        return "User was removed successfully.";
+        return JsonResponse(true,"User removed.");
     }
-}
+}// Add messages where appropriate

@@ -8,159 +8,145 @@ namespace KnowledgeBase.Controllers;
 [Produces("application/json")]
 public class FileController : ControllerBase
 {
+    static JsonObject JsonResponse(bool success, string message, JsonObject? data = null) => JResponse.Create(success, message, data);
     private Directory root;
 
     public FileController()
     {
         try{
-            root = new Directory("root");
+            root = new Directory(Path.Combine(System.IO.Directory.GetCurrentDirectory(),"root"));
         }
         catch(Exception e){
             Console.WriteLine(e.Message + "\nCreating root directory.");
-            System.IO.Directory.CreateDirectory("root");
-        }
-        finally{
-            root = new Directory("root");
+            root = Directory.Create(Path.Combine(System.IO.Directory.GetCurrentDirectory(),"root"));
         }
     }
 
     [Route("Create")]
-    public string Create([FromBody] JsonObject fileInfo)
+    public JsonObject Create([FromBody] JsonObject fileInfo)
     {
-        if(fileInfo is null){
-            return "File info cannot be null.";
-        }
-
+        if(fileInfo is null)
+            return JsonResponse(false, "File info cannot be null.");
+        
         var path = fileInfo["fileInfo"]?["path"]?.ToString();
+        string? token = fileInfo["fileInfo"]?["token"]?.ToString();
 
-        if(string.IsNullOrEmpty(path)){
-            return "Path cannot be null.";
-        }
-
+        if (UserDB.VerifyToken(token) == null)
+            return JsonResponse(false,"Invalid token.");
+        
         try
         {
-            File newFile = KnowledgeBase.File.Create(root.Info.FullName + @"/" + path);
+            File newFile = KnowledgeBase.File.Create(Path.Combine(System.IO.Directory.GetCurrentDirectory(), path));
         }
         catch(Exception e)
         {
-            return e.Message;
+            return JsonResponse(false,e.Message);
         }
         
-        return "File created successfully.";
+        return JsonResponse(true,"File created.");
     }
 
     [Route("Move")]
-    public string Move([FromBody] JsonObject fileInfo)
+    public JsonObject Move([FromBody] JsonObject fileInfo)
     {
-        if(fileInfo is null){
-            return "File info cannot be null.";
-        }
+        if(fileInfo is null)
+            return JsonResponse(false, "File info cannot be null.");
 
         var sourcePath = fileInfo["fileInfo"]?["source"]?.ToString();
         var destPath = fileInfo["fileInfo"]?["destination"]?.ToString();
+        string? token = fileInfo["fileInfo"]?["token"]?.ToString();
 
-        if(string.IsNullOrEmpty(sourcePath) || string.IsNullOrEmpty(destPath)){
-            return "Source and destination paths cannot be null.";
-        }
+        if (UserDB.VerifyToken(token) == null)
+            return JsonResponse(false,"Invalid token.");
 
         try
         {
-            File source = new File(root.Info.FullName + @"/" + sourcePath);
-            Directory dest = new Directory(root.Info.FullName + @"/" + destPath);
+            File source = new(Path.Combine(System.IO.Directory.GetCurrentDirectory(), sourcePath));
+            Directory dest = new(Path.Combine(System.IO.Directory.GetCurrentDirectory(), destPath));
             source.Move(dest);
         }
         catch (Exception e)
         {
-            return e.Message;
+            return JsonResponse(false,e.Message);
         }
 
-        return "File moved successfully.";
+        return JsonResponse(true,"File moved.");
     }
 
     [Route("Delete")]
-    public string Delete([FromBody] JsonObject fileInfo)
+    public JsonObject Delete([FromBody] JsonObject fileInfo)
     {
-        if(fileInfo is null){
-            return "File info cannot be null.";
-        }
+        if(fileInfo is null)
+            return JsonResponse(false, "File info cannot be null.");
 
         var path = fileInfo["fileInfo"]?["path"]?.ToString();
+        string? token = fileInfo["fileInfo"]?["token"]?.ToString();
 
-        if(string.IsNullOrEmpty(path)){
-            return "Path cannot be null.";
-        }
-
+        if (UserDB.VerifyToken(token) == null)
+            return JsonResponse(false,"Invalid token.");
+        
         try
         {
-            File source = new File(root.Info.FullName + @"/" + path);
+            File source = new(Path.Combine(System.IO.Directory.GetCurrentDirectory(), path));
             source.Delete();
         }
         catch (Exception e)
         {
-            return e.Message;
+            return JsonResponse(false,e.Message);
         }
 
-        return "File deleted successfully.";
+        return JsonResponse(true,"File deleted.");
     }
 
     [Route("Write")]
-    public string Write([FromBody] JsonObject fileInfo)
+    public JsonObject Write([FromBody] JsonObject fileInfo)
     {
-        if(fileInfo is null){
-            return "File info cannot be null.";
-        }
+        if(fileInfo is null)
+            return JsonResponse(false, "File info cannot be null.");
 
         var path = fileInfo["fileInfo"]?["path"]?.ToString();
         var content = fileInfo["fileInfo"]?["content"]?.ToString();
         var append = fileInfo["fileInfo"]?["append"]?.ToString();
-        bool.TryParse(append, out bool appendBool);
+        string? token = fileInfo["fileInfo"]?["token"]?.ToString();
 
-        if(string.IsNullOrEmpty(path) || string.IsNullOrEmpty(content)){
-            return "Path and content cannot be null.";
-        }
+        if (UserDB.VerifyToken(token) == null)
+            return JsonResponse(false,"Invalid token.");
+
+        if(!bool.TryParse(append, out bool appendBool))
+            return JsonResponse(false,"Append is an improper value");
 
         try
         {
-            File source = new File(root.Info.FullName + @"/" + path);
-            if(appendBool){
-                source.Write(content, true);
-            }
-            else{
-                source.Write(content);
-            }
+            File source = new(Path.Combine(System.IO.Directory.GetCurrentDirectory(), path));
+            source.Write(content, appendBool );
         }
         catch (Exception e)
         {
-            return e.Message;
+            return JsonResponse(false,e.Message);
         }
 
-        return "File written successfully.";
+        return JsonResponse(true,"File written to.");
     }
 
     [Route("Read")]
-    public string Read([FromBody] JsonObject fileInfo)
+    public JsonObject Read([FromBody] JsonObject fileInfo)
     {
-        if(fileInfo is null){
-            return "File info cannot be null.";
-        }
+        if(fileInfo is null)
+            return JsonResponse(false, "File info cannot be null.");
 
         var path = fileInfo["fileInfo"]?["path"]?.ToString();
         string content;
 
-        if(string.IsNullOrEmpty(path)){
-            return "Path cannot be null.";
-        }
-
         try
         {
-            File source = new File(root.Info.FullName + @"/" + path);
+            File source = new(Path.Combine(System.IO.Directory.GetCurrentDirectory(), path));
             content = source.Read();
         }
         catch (Exception e)
         {
-            return e.Message;
+            return JsonResponse(false,e.Message);
         }
 
-        return content;
+        return JsonResponse(true,"File read from.", new JsonObject { ["FileContent"] = content});
     }
 }

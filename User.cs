@@ -1,9 +1,13 @@
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+
 namespace KnowledgeBase
 {
     public class User
     {
         private string username;
         private string password;
+        private int accessLevel;
+
         public string Username
         {
             get => username;
@@ -30,9 +34,15 @@ namespace KnowledgeBase
         }
         public int AccessLevel
         {
-            get; set;
+            get => accessLevel;
+            set
+            {
+                if(value < 0)
+                    throw new Exception("Not a valid access level.");
+                accessLevel = value;
+            }
         }
-        public User(string username, string password, int accessLevel)
+        public User(string? username, string? password, int accessLevel = 0)
         {
             Username = username;
             Password = password;

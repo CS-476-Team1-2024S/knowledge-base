@@ -8,48 +8,34 @@ namespace KnowledgeBase.Controllers;
 [Produces("application/json")]
 public class SearchController : ControllerBase
 {
-    private Directory root;
-    private FileIndexer index;
-
+    static JsonObject JsonResponse(bool success, string message, JsonObject? data = null) => JResponse.Create(success, message, data);
     public SearchController()
     {
-        index = new FileIndexer();
-        try{
-            root = new Directory("root");
-        }
-        catch(Exception e){
-            Console.WriteLine(e.Message + "\nCreating root directory.");
-            System.IO.Directory.CreateDirectory("root");
-        }
-        finally{
-            root = new Directory("root");
-        }
     }
 
     [Route("Query")]
-    public string Query([FromBody] JsonObject searchInfo)
+    public JsonObject Query([FromBody] JsonObject searchInfo)
     {
         List<String> searchResults;
-        if(searchInfo is null){
-            return "File info cannot be null.";
-        }
+        if(searchInfo is null)
+            return JsonResponse(false, "Search info cannot be null.");
 
         var query = searchInfo["searchInfo"]?["query"]?.ToString();
 
-        if(string.IsNullOrEmpty(query)){
-            return "Query cannot be null.";
-        }
-
         try
         {
-            index.IndexDirectory(root);
-            searchResults = index.SearchTFIDF(query);
+            searchResults = Indexer.SearchTFIDF(query);
         }
         catch(Exception e)
         {
-            return e.Message;
+            return JsonResponse(false, e.Message);
         }
-        
-        return string.Join(",", searchResults);
+
+        var jsonArray = new JsonArray();
+        foreach (var path in searchResults)
+        {
+            jsonArray.Add(path);
+        }
+        return JsonResponse(true, "Search complete.", new JsonObject{["FilePaths"] = jsonArray});
     }
 }
